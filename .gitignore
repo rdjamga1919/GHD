@@ -1,0 +1,9 @@
+# Configuration PhpStorm
+.idea/
+
+# Fichiers système macOS
+.DS_Store
+
+# Fichiers envoyés par les utilisateurs
+uploads/*
+!uploads/.gitkeep
