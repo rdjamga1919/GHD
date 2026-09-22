@@ -1,0 +1,12 @@
+# Configuration PhpStorm
+.idea/
+
+# Fichiers système macOS
+.DS_Store
+
+# Fichiers envoyés par les utilisateurs
+uploads/*
+!uploads/.gitkeep
+
+# Fichier de connexion à la BDD (identifiants locaux propres à chacun)
+src/bdd/Bdd.new.php

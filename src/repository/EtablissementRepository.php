@@ -72,7 +72,7 @@ class EtablissementRepository
     public function create($etablissement)
     {
         $sql = "INSERT INTO etablissement
-                (nom, adresse, site_web)
+                (nom_etablissement, adresse, site_web)
                 VALUES (:nom, :adresse, :site_web)";
 
         $stmt = $this->pdo->prepare($sql);
@@ -92,7 +92,7 @@ class EtablissementRepository
     public function update($etablissement)
     {
         $sql = "UPDATE etablissement
-                SET nom = :nom,
+                SET nom_etablissement = :nom,
                     adresse = :adresse,
                     site_web = :site_web
                 WHERE id_etablissement = :id";

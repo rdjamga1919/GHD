@@ -1,20 +1,20 @@
 <?php
-class hopital
+class Hopital
 {
     private $id_hopital;
-    private $nom;
-    private $localisation;
+    private $nom_hopital;
+    private $commune;
 
     /**
      * @param $id_hopital
-     * @param $nom
-     * @param $localisation
+     * @param $nom_hopital
+     * @param $commune
      */
-    public function __construct($id_hopital, $nom, $localisation)
+    public function __construct($id_hopital, $nom_hopital, $commune)
     {
         $this->id_hopital = $id_hopital;
-        $this->nom = $nom;
-        $this->localisation = $localisation;
+        $this->nom_hopital = $nom_hopital;
+        $this->commune = $commune;
     }
 
     /**
@@ -30,15 +30,15 @@ class hopital
      */
     public function getNom()
     {
-        return $this->nom;
+        return $this->nom_hopital;
     }
 
     /**
      * @return mixed
      */
-    public function getLocalisation()
+    public function getCommune()
     {
-        return $this->localisation;
+        return $this->commune;
     }
 
     /**
@@ -50,18 +50,18 @@ class hopital
     }
 
     /**
-     * @param mixed $nom
+     * @param mixed $nom_hopital
      */
-    public function setNom($nom)
+    public function setNom($nom_hopital)
     {
-        $this->nom = $nom;
+        $this->nom_hopital = $nom_hopital;
     }
 
     /**
-     * @param mixed $localisation
+     * @param mixed $commune
      */
-    public function setLocalisation($localisation)
+    public function setCommune($commune)
     {
-        $this->localisation = $localisation;
+        $this->commune = $commune;
     }
 }

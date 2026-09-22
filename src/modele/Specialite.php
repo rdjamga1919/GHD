@@ -1,17 +1,17 @@
 <?php
-class specialite
+class Specialite
 {
     private $id_specialite;
-    private $nom;
+    private $libelle_specialite;
 
     /**
      * @param $id_specialite
-     * @param $nom
+     * @param $libelle_specialite
      */
-    public function __construct($id_specialite, $nom)
+    public function __construct($id_specialite, $libelle_specialite)
     {
         $this->id_specialite = $id_specialite;
-        $this->nom = $nom;
+        $this->libelle_specialite = $libelle_specialite;
     }
 
     /**
@@ -25,9 +25,9 @@ class specialite
     /**
      * @return mixed
      */
-    public function getNom()
+    public function getLibelle()
     {
-        return $this->nom;
+        return $this->libelle_specialite;
     }
 
     /**
@@ -41,8 +41,8 @@ class specialite
     /**
      * @param mixed $nom
      */
-    public function setNom($nom)
+    public function setLibelle($libelle_specialite)
     {
-        $this->nom = $nom;
+        $this->libelle_specialite = $libelle_specialite;
     }
 }

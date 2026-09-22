@@ -1,21 +1,21 @@
 <?php
-class etablissement
+class Etablissement
 {
     private $id_etablissement;
-    private $nom;
+    private $nom_etablissement;
     private $adresse;
     private $site_web;
 
     /**
      * @param $id_etablissement
-     * @param $nom
+     * @param $nom_etablissement
      * @param $adresse
      * @param $site_web
      */
-    public function __construct($id_etablissement, $nom, $adresse, $site_web)
+    public function __construct($id_etablissement, $nom_etablissement, $adresse, $site_web)
     {
         $this->id_etablissement = $id_etablissement;
-        $this->nom = $nom;
+        $this->nom_etablissement = $nom_etablissement;
         $this->adresse = $adresse;
         $this->site_web = $site_web;
     }
@@ -33,7 +33,7 @@ class etablissement
      */
     public function getNom()
     {
-        return $this->nom;
+        return $this->nom_etablissement;
     }
 
     /**

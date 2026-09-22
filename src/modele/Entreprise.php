@@ -1,21 +1,21 @@
 <?php
-class entreprise
+class Entreprise
 {
     private $id_entreprise;
-    private $nom;
+    private $nom_entreprise;
     private $adresse;
     private $site_web;
 
     /**
      * @param $id_entreprise
-     * @param $nom
+     * @param $nom_entreprise
      * @param $adresse
      * @param $site_web
      */
-    public function __construct($id_entreprise, $nom, $adresse, $site_web)
+    public function __construct($id_entreprise, $nom_entreprise, $adresse, $site_web)
     {
         $this->id_entreprise = $id_entreprise;
-        $this->nom = $nom;
+        $this->nom_entreprise = $nom_entreprise;
         $this->adresse = $adresse;
         $this->site_web = $site_web;
     }
@@ -33,7 +33,7 @@ class entreprise
      */
     public function getNom()
     {
-        return $this->nom;
+        return $this->nom_entreprise;
     }
 
     /**
@@ -63,9 +63,9 @@ class entreprise
     /**
      * @param mixed $nom
      */
-    public function setNom($nom)
+    public function setNom($nom_entreprise)
     {
-        $this->nom = $nom;
+        $this->nom_entreprise = $nom_entreprise;
     }
 
     /**
