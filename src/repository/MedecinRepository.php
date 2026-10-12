@@ -1,7 +1,6 @@
 <?php
 
-
-require_once __DIR__ . '/../bdd/Bdd.php';
+require_once __DIR__ . '/../bdd/Bdd.new.php';
 require_once __DIR__ . '/../modele/Medecin.php';
 require_once __DIR__ . '/UtilisateurRepository.php';
 
@@ -15,7 +14,7 @@ class MedecinRepository
 
     public function __construct()
     {
-        $this->pdo = Bdd::getConnexion();
+        $this->pdo = (new Bdd())->getConnexionBdd();
     }
 
     private function hydrate(array $row): Medecin
@@ -38,6 +37,29 @@ class MedecinRepository
         $stmt->execute(['id' => $idUtilisateur]);
         $row = $stmt->fetch();
         return $row ? $this->hydrate($row) : null;
+    }
+    public function getSpecialites(int $idMedecin): array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT s.*
+             FROM specialite s
+             JOIN posseder p ON p.ref_specialite = s.id_specialite
+             WHERE p.ref_medecin = :id'
+        );
+        $stmt->execute(['id' => $idMedecin]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getHopitaux(int $idMedecin): array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT h.*
+             FROM hopital h
+             JOIN exercer e ON e.ref_hopital = h.id_hopital
+             WHERE e.ref_medecin = :id'
+        );
+        $stmt->execute(['id' => $idMedecin]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function insert(Medecin $m): int
