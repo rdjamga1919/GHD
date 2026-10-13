@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../bdd/Bdd.php';
+require_once __DIR__ . '/../bdd/Bdd.new.php';
 require_once __DIR__ . '/../modele/Partenaire.php';
 require_once __DIR__ . '/UtilisateurRepository.php';
 
@@ -14,7 +14,7 @@ class PartenaireRepository
 
     public function __construct()
     {
-        $this->pdo = Bdd::getConnexion();
+        $this->pdo = (new Bdd())->getConnexionBdd();
     }
 
     private function hydrate(array $row): Partenaire
