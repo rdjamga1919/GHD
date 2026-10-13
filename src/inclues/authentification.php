@@ -1,11 +1,12 @@
 <?php
-// Ce fichier suppose que session_start() a déjà été appelé par la page
-// qui l'inclut. Il s'appuie sur les clés de session posées par
-// connexion_traitement.php : $_SESSION['utilisateur_id'] et $_SESSION['role'].
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 function isLoggedIn(): bool
 {
-    return isset($_SESSION['id_utilisateur']);
+    return isset($_SESSION['utilisateur_id']);
 }
 
 function isAdmin(): bool
@@ -21,7 +22,7 @@ function hasRole(string $role): bool
 function requireLogin(): void
 {
     if (!isLoggedIn()) {
-        header('Location: /connexion.php');
+        header('Location: ' . urlConnexion());
         exit;
     }
 }
@@ -33,4 +34,16 @@ function requireRole(string $role): void
         http_response_code(403);
         exit('Accès refusé.');
     }
+}
+
+function urlConnexion(): string
+{
+    $racineProjet = str_replace('\\', '/', (string) realpath(__DIR__ . '/../..'));
+    $racineWeb = str_replace('\\', '/', (string) realpath($_SERVER['DOCUMENT_ROOT'] ?? ''));
+
+    if ($racineWeb !== '' && stripos($racineProjet, $racineWeb) === 0) {
+        return substr($racineProjet, strlen($racineWeb)) . '/public/connexion.php';
+    }
+
+    return '/public/connexion.php';
 }
