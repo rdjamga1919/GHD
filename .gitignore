@@ -9,4 +9,4 @@ uploads/*
 !uploads/.gitkeep
 
 # Fichier de connexion à la BDD (identifiants locaux propres à chacun)
-src/bdd/Bdd.new.php
+/src/bdd/Bdd.php

@@ -1,4 +1,8 @@
 <?php
+
+require_once __DIR__ . '/../bdd/Bdd.php';
+require_once __DIR__ . '/../modele/Offre.php';
+
 class OffreRepository{
 
     private $connexionBdd;
@@ -23,7 +27,7 @@ class OffreRepository{
         if (!$result) {
             return null;
         }
-        return new Offre($result["id_offre"], $result["titre"], $result["description"], $result["missions"], $result["salaire"], $result["type_d_offre"], $result["etat"], $result["date_publication"], $result["ref_utilisateur"]);
+        return new Offre($result["id_offre"], $result["ref_utilisateur"], $result["date_publication"], $result["etat"], $result["type_d_offre"], $result["missions"], $result["description"], $result["titre"], $result["salaire"]);
     }
 
     public function getAllOffre(): array
@@ -34,7 +38,7 @@ class OffreRepository{
         $results = $req->fetchAll();
         $tabOffre = [];
         foreach ($results as $result) {
-            $tabOffre[] = new Offre($result["id_offre"], $result["titre"], $result["description"], $result["missions"], $result["salaire"], $result["type_d_offre"], $result["etat"], $result["date_publication"], $result["ref_utilisateur"]);
+            $tabOffre[] = new Offre($result["id_offre"], $result["ref_utilisateur"], $result["date_publication"], $result["etat"], $result["type_d_offre"], $result["missions"], $result["description"], $result["titre"], $result["salaire"]);
         }
         return $tabOffre;
     }

@@ -1,11 +1,12 @@
 <?php
+//page : src/inclues/authentification
 // Ce fichier suppose que session_start() a déjà été appelé par la page
 // qui l'inclut. Il s'appuie sur les clés de session posées par
 // connexion_traitement.php : $_SESSION['utilisateur_id'] et $_SESSION['role'].
 
 function isLoggedIn(): bool
 {
-    return isset($_SESSION['id_utilisateur']);
+    return isset($_SESSION['utilisateur_id']);
 }
 
 function isAdmin(): bool
@@ -21,7 +22,7 @@ function hasRole(string $role): bool
 function requireLogin(): void
 {
     if (!isLoggedIn()) {
-        header('Location: /connexion.php');
+        header('Location: /GHD/public/connexion.php');
         exit;
     }
 }
