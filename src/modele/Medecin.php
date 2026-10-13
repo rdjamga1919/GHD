@@ -17,7 +17,7 @@ class Medecin extends Utilisateur
         $this->id_medecin = $idMedecin;
     }
 
-    public function getIdMedecin(): ?int { return $this->idMedecin; }
-    public function getNumeroRpps(): string { return $this->numeroRpps; }
-    public function setNumeroRpps(string $numeroRpps): void { $this->numeroRpps = $numeroRpps; }
+    public function getIdMedecin(): ?int { return $this->id_medecin; }
+    public function getNumeroRpps(): string { return $this->numero_rpps; }
+    public function setNumeroRpps(string $numeroRpps): void { $this->numero_rpps = $numeroRpps; }
 }

@@ -1,4 +1,8 @@
 <?php
+
+require_once __DIR__ . '/../bdd/Bdd.php';
+require_once __DIR__ . '/../modele/Evenement.php';
+
 class EvenementRepository
 {
     private $connexionBdd;
@@ -25,7 +29,7 @@ class EvenementRepository
         if (!$result) {
             return null;
         }
-        return new Evenement($result["id_evenement"], $result["titre"], $result["description"], $result["type_evenement"], $result["adresse_lieu"], $result["element_requis"], $result["nombre_place"], $result["date_heure_evenement"]);
+        return new Evenement($result["id_evenement"], $result["date_heure_evenement"], $result["element_requis"], $result["nombre_place"], $result["type_evenement"], $result["adresse_lieu"], $result["description"], $result["titre"]);
     }
 
     public function getAllEvenement(): array
@@ -36,7 +40,7 @@ class EvenementRepository
         $results = $req->fetchAll();
         $tabEvenement = [];
         foreach ($results as $result) {
-            $tabEvenement[] = new Evenement($result["id_evenement"], $result["titre"], $result["description"], $result["type_evenement"], $result["adresse_lieu"], $result["element_requis"], $result["nombre_place"], $result["date_heure_evenement"]);
+            $tabEvenement[] = new Evenement($result["id_evenement"], $result["date_heure_evenement"], $result["element_requis"], $result["nombre_place"], $result["type_evenement"], $result["adresse_lieu"], $result["description"], $result["titre"]);
         }
         return $tabEvenement;
     }

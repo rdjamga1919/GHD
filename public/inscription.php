@@ -1,214 +1,29 @@
 <?php
+// Vue du formulaire : toutes les créations sont réalisées par le traitement dédié.
+session_start();
+require_once __DIR__ . '/../src/repository/EtablissementRepository.php';
+require_once __DIR__ . '/../src/repository/EntrepriseRepository.php';
 
-class Utilisateur
-{
-    private PDO $database;
-
-    public function __construct(PDO $database)
-    {
-        $this->database = $database;
-    }
-
-    /**
-     * Vérifie si l'adresse email existe déjà.
-     */
-    public function emailExiste(string $email): bool
-    {
-        $query = "
-            SELECT id_utilisateur
-            FROM Utilisateur
-            WHERE email = :email
-        ";
-
-        $statement = $this->database->prepare($query);
-        $statement->execute([
-            'email' => $email
-        ]);
-
-        return $statement->fetch() !== false;
-    }
-
-    /**
-     * Crée un nouvel utilisateur.
-     */
-    public function inscrire(
-        string $nom,
-        string $prenom,
-        string $email,
-        string $motDePasse,
-        string $role
-    ): bool {
-        $motDePasseHash = password_hash(
-            $motDePasse,
-            PASSWORD_DEFAULT
-        );
-
-        $query = "
-            INSERT INTO Utilisateur
-                (nom, prenom, email, mot_de_passe, role)
-            VALUES
-                (:nom, :prenom, :email, :mot_de_passe, :role)
-        ";
-
-        $statement = $this->database->prepare($query);
-
-        return $statement->execute([
-            'nom' => $nom,
-            'prenom' => $prenom,
-            'email' => $email,
-            'mot_de_passe' => $motDePasseHash,
-            'role' => $role
-        ]);
-    }
+$message = $_SESSION['inscription_message'] ?? '';
+$messageType = $_SESSION['inscription_message_type'] ?? '';
+$valeurs = $_SESSION['inscription_valeurs'] ?? [];
+unset($_SESSION['inscription_message'], $_SESSION['inscription_message_type'], $_SESSION['inscription_valeurs']);
+$nom = $valeurs['nom'] ?? '';
+$prenom = $valeurs['prenom'] ?? '';
+$email = $valeurs['email'] ?? '';
+$role = $valeurs['role'] ?? '';
+if (!isset($_SESSION['csrf_inscription'])) {
+    $_SESSION['csrf_inscription'] = bin2hex(random_bytes(32));
 }
-
-
-/*
-|--------------------------------------------------------------------------
-| Connexion à la base de données
-|--------------------------------------------------------------------------
-*/
-
+$etablissements = [];
+$entreprises = [];
 try {
-    $database = new PDO(
-        'mysql:host=localhost;dbname=gdh_hsp;charset=utf8mb4',
-        'root',
-        ''
-    );
-
-    $database->setAttribute(
-        PDO::ATTR_ERRMODE,
-        PDO::ERRMODE_EXCEPTION
-    );
-
-    $database->setAttribute(
-        PDO::ATTR_DEFAULT_FETCH_MODE,
-        PDO::FETCH_ASSOC
-    );
-
+    $etablissements = (new EtablissementRepository())->findAll();
+    $entreprises = (new EntrepriseRepository())->findAll();
 } catch (PDOException $exception) {
-    die('Impossible de se connecter à la base de données.');
+    $message = 'Impossible de charger les établissements et entreprises. Veuillez réessayer.';
+    $messageType = 'error';
 }
-
-
-/*
-|--------------------------------------------------------------------------
-| Initialisation
-|--------------------------------------------------------------------------
-*/
-
-$utilisateur = new Utilisateur($database);
-
-$message = '';
-$messageType = '';
-
-
-/*
-|--------------------------------------------------------------------------
-| Traitement du formulaire
-|--------------------------------------------------------------------------
-*/
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    $nom = trim(isset($_POST['nom']) ? $_POST['nom'] : '');
-    $prenom = trim(isset($_POST['prenom']) ? $_POST['prenom'] : '');
-    $email = trim(isset($_POST['email']) ? $_POST['email'] : '');
-    $motDePasse = isset($_POST['mot_de_passe']) ? $_POST['mot_de_passe'] : '';
-    $confirmation = isset($_POST['confirmation']) ? $_POST['confirmation'] : '';
-    $role = isset($_POST['role']) ? $_POST['role'] : '';
-
-    /*
-     * Vérification des champs obligatoires.
-     */
-    if (
-        $nom === '' ||
-        $prenom === '' ||
-        $email === '' ||
-        $motDePasse === '' ||
-        $confirmation === '' ||
-        $role === ''
-    ) {
-        $message = 'Veuillez remplir tous les champs.';
-        $messageType = 'error';
-    }
-
-    /*
-     * Vérification de l'adresse email.
-     */
-    elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $message = 'Veuillez saisir une adresse email valide.';
-        $messageType = 'error';
-    }
-
-    /*
-     * Vérification de la longueur du mot de passe.
-     */
-    elseif (strlen($motDePasse) < 8) {
-        $message = 'Le mot de passe doit contenir au moins 8 caractères.';
-        $messageType = 'error';
-    }
-
-    /*
-     * Vérification de la confirmation du mot de passe.
-     */
-    elseif ($motDePasse !== $confirmation) {
-        $message = 'Les mots de passe ne correspondent pas.';
-        $messageType = 'error';
-    }
-
-    /*
-     * Vérification du rôle.
-     */
-    elseif (
-        !in_array(
-            $role,
-            ['etudiant', 'medecin', 'partenaire', 'gestionnaire'],
-            true
-        )
-    ) {
-        $message = 'Le rôle sélectionné est invalide.';
-        $messageType = 'error';
-    }
-
-    /*
-     * Vérification de l'email dans la BDD.
-     */
-    elseif ($utilisateur->emailExiste($email)) {
-        $message = 'Cette adresse email est déjà utilisée.';
-        $messageType = 'error';
-    }
-
-    /*
-     * Création du compte.
-     */
-    else {
-        try {
-            $utilisateur->inscrire(
-                $nom,
-                $prenom,
-                $email,
-                $motDePasse,
-                $role
-            );
-
-            $message = 'Votre compte a été créé avec succès.';
-            $messageType = 'success';
-
-            /*
-             * On vide les champs après une inscription réussie.
-             */
-            $nom = '';
-            $prenom = '';
-            $email = '';
-
-        } catch (PDOException $exception) {
-            $message = 'Une erreur est survenue lors de la création du compte.';
-            $messageType = 'error';
-        }
-    }
-}
-
 ?>
 
 <!DOCTYPE html>
@@ -217,7 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <head>
 
-    ```
     <meta charset="UTF-8">
 
     <meta
@@ -344,13 +158,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
     </style>
-    ```
 
 </head>
 
 <body>
 
-```
 <main class="formulaire">
 
     <h1>Créer un compte</h1>
@@ -364,7 +176,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
 
-    <form method="POST" action="">
+    <form method="POST" action="/GHD/src/traitement/inscription_traitement.php">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_inscription'], ENT_QUOTES, 'UTF-8') ?>">
 
         <!-- Nom -->
         <div class="champ">
@@ -476,26 +289,77 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     -- Choisir un rôle --
                 </option>
 
-                <option value="etudiant">
+                <option value="etudiant" <?= $role === 'etudiant' ? 'selected' : '' ?>>
                     Étudiant
                 </option>
 
-                <option value="medecin">
+                <option value="medecin" <?= $role === 'medecin' ? 'selected' : '' ?>>
                     Médecin
                 </option>
 
-                <option value="partenaire">
+                <option value="partenaire" <?= $role === 'partenaire' ? 'selected' : '' ?>>
                     Partenaire
-                </option>
-
-                <option value="gestionnaire">
-                    Gestionnaire
                 </option>
 
             </select>
 
         </div>
 
+
+        <div data-role="etudiant" hidden>
+            <div class="champ">
+                <label for="formation">Formation</label>
+                <input type="text" id="formation" name="formation" maxlength="150"
+                       value="<?= htmlspecialchars($valeurs['formation'] ?? '', ENT_QUOTES, 'UTF-8') ?>" disabled>
+            </div>
+            <div class="champ">
+                <label for="ref_etablissement">Établissement</label>
+                <select id="ref_etablissement" name="ref_etablissement" disabled>
+                    <option value="">-- Choisir un établissement --</option>
+                    <?php foreach ($etablissements as $etablissement): ?>
+                        <option value="<?= (int) $etablissement->getIdEtablissement() ?>"
+                            <?= (string) ($valeurs['ref_etablissement'] ?? '') === (string) $etablissement->getIdEtablissement() ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($etablissement->getNom(), ENT_QUOTES, 'UTF-8') ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <?php if (empty($etablissements)): ?>
+                    <p>Aucun établissement disponible : l'inscription étudiante nécessite un établissement existant.</p>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div data-role="medecin" hidden>
+            <div class="champ">
+                <label for="numero_rpps">Numéro RPPS</label>
+                <input type="text" id="numero_rpps" name="numero_rpps" maxlength="20"
+                       value="<?= htmlspecialchars($valeurs['numero_rpps'] ?? '', ENT_QUOTES, 'UTF-8') ?>" disabled>
+            </div>
+        </div>
+
+        <div data-role="partenaire" hidden>
+            <div class="champ">
+                <label for="poste">Poste</label>
+                <input type="text" id="poste" name="poste" maxlength="100"
+                       value="<?= htmlspecialchars($valeurs['poste'] ?? '', ENT_QUOTES, 'UTF-8') ?>" disabled>
+            </div>
+            <div class="champ">
+                <label for="ref_entreprise">Entreprise</label>
+                <select id="ref_entreprise" name="ref_entreprise" disabled>
+                    <option value="">-- Choisir une entreprise --</option>
+                    <?php foreach ($entreprises as $entreprise): ?>
+                        <option value="<?= (int) $entreprise->getIdEntreprise() ?>"
+                            <?= (string) ($valeurs['ref_entreprise'] ?? '') === (string) $entreprise->getIdEntreprise() ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($entreprise->getNom(), ENT_QUOTES, 'UTF-8') ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <?php if (empty($entreprises)): ?>
+                    <p>Aucune entreprise disponible : l'inscription partenaire nécessite une entreprise existante.</p>
+                <?php endif; ?>
+            </div>
+        </div>
+        <noscript>JavaScript est nécessaire pour afficher les champs du rôle sélectionné.</noscript>
 
         <button type="submit">
             S'inscrire
@@ -504,7 +368,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 
 </main>
-```
+
+<script>
+    const selectionRole = document.getElementById('role');
+    function afficherChampsRole() {
+        document.querySelectorAll('[data-role]').forEach(function (bloc) {
+            const actif = bloc.dataset.role === selectionRole.value;
+            bloc.hidden = !actif;
+            bloc.querySelectorAll('input, select').forEach(function (champ) {
+                champ.disabled = !actif;
+                champ.required = actif;
+            });
+        });
+    }
+    selectionRole.addEventListener('change', afficherChampsRole);
+    afficherChampsRole();
+</script>
 
 </body>
 
