@@ -5,7 +5,7 @@ require_once __DIR__ . '/../modele/Entreprise.php';
 
 class EntrepriseRepository
 {
-    private const COL_NOM = 'nom_entreprise';
+    private const COL_NOM = 'nom_entreprise
     private PDO $pdo;
 
     public function __construct()
