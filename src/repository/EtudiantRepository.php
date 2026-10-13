@@ -1,3 +1,4 @@
+```
 <?php
 
 require_once __DIR__ . '/../bdd/Bdd.new.php';
@@ -74,10 +75,10 @@ class EtudiantRepository
                  WHERE ref_utilisateur = :utilisateur'
             );
             $stmt->execute([
-                'cv'            => $e->getCvEtudiant(),
-                'formation'     => $e->getFormation(),
+                'cv' => $e->getCvEtudiant(),
+                'formation' => $e->getFormation(),
                 'etablissement' => $e->getRefEtablissement(),
-                'utilisateur'   => $e->getIdUtilisateur(),
+                'utilisateur' => $e->getIdUtilisateur(),
             ]);
             $this->pdo->commit();
         } catch (Throwable $ex) {
