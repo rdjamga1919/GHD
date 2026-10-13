@@ -17,10 +17,10 @@ if ($_SESSION['role'] === 'medecin') {
 
 if ($medecin !== null && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $actions = [
-        'ajouter_specialite' => ['ajouterSpecialite', 'Spécialité ajoutée.', 'Spécialité invalide ou déjà présente.'],
-        'retirer_specialite' => ['retirerSpecialite', 'Spécialité retirée.', "Cette spécialité n'est pas dans votre profil."],
-        'ajouter_hopital'    => ['ajouterHopital', "Hôpital d'exercice ajouté.", 'Hôpital invalide ou déjà présent.'],
-        'retirer_hopital'    => ['retirerHopital', "Hôpital d'exercice retiré.", "Cet hôpital n'est pas dans votre profil."],
+            'ajouter_specialite' => ['ajouterSpecialite', 'Spécialité ajoutée.', 'Spécialité invalide ou déjà présente.'],
+            'retirer_specialite' => ['retirerSpecialite', 'Spécialité retirée.', "Cette spécialité n'est pas dans votre profil."],
+            'ajouter_hopital'    => ['ajouterHopital', "Hôpital d'exercice ajouté.", 'Hôpital invalide ou déjà présent.'],
+            'retirer_hopital'    => ['retirerHopital', "Hôpital d'exercice retiré.", "Cet hôpital n'est pas dans votre profil."],
     ];
 
     $action = $_POST['action'] ?? '';
@@ -57,12 +57,12 @@ if ($medecin !== null) {
     $idsHopitaux = array_column($hopitaux, 'id_hopital');
 
     $specialitesDispo = array_filter(
-        $repo->getToutesSpecialites(),
-        fn($s) => !in_array($s['id_specialite'], $idsSpecialites)
+            $repo->getToutesSpecialites(),
+            fn($s) => !in_array($s['id_specialite'], $idsSpecialites)
     );
     $hopitauxDispo = array_filter(
-        $repo->getTousHopitaux(),
-        fn($h) => !in_array($h['id_hopital'], $idsHopitaux)
+            $repo->getTousHopitaux(),
+            fn($h) => !in_array($h['id_hopital'], $idsHopitaux)
     );
 }
 ?>
@@ -75,7 +75,7 @@ if ($medecin !== null) {
 <body>
 
 <?php if ($flash !== null): ?>
-    <p style="color: <?= $flash[0] === 'succes' ? 'green' : 'red' ?>;">
+    <p class="message message-<?= $flash[0] === 'succes' ? 'succes' : 'erreur' ?>">
         <?= htmlspecialchars($flash[1]) ?>
     </p>
 <?php endif; ?>
@@ -92,7 +92,7 @@ if ($medecin !== null) {
             <?php foreach ($specialites as $s): ?>
                 <li>
                     <?= htmlspecialchars($s['libelle_specialite']) ?>
-                    <form method="post" style="display:inline;">
+                    <form method="post" class="form-retrait">
                         <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
                         <input type="hidden" name="action" value="retirer_specialite">
                         <input type="hidden" name="id" value="<?= (int) $s['id_specialite'] ?>">
@@ -129,7 +129,7 @@ if ($medecin !== null) {
             <?php foreach ($hopitaux as $h): ?>
                 <li>
                     <?= htmlspecialchars($h['nom_hopital']) ?> (<?= htmlspecialchars($h['commune']) ?>)
-                    <form method="post" style="display:inline;">
+                    <form method="post" class="form-retrait">
                         <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
                         <input type="hidden" name="action" value="retirer_hopital">
                         <input type="hidden" name="id" value="<?= (int) $h['id_hopital'] ?>">
