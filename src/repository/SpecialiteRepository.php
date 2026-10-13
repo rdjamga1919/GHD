@@ -1,113 +1,83 @@
 <?php
 
-require_once 'Connexion.php';
-require_once 'Specialite.php';
+require_once __DIR__ . '/../bdd/Bdd.new.php';
+require_once __DIR__ . '/../modele/Specialite.php';
 
 class SpecialiteRepository
 {
-    private $pdo;
+    private const COL_LIBELLE = 'libelle_specialite';
+
+    private PDO $pdo;
 
     public function __construct()
     {
-        $this->pdo = Connexion::getPdo();
+        $this->pdo = (new Bdd())->getConnexionBdd();
     }
 
     /**
-     * Récupérer toutes les spécialités
-     *
-     * @return specialite[]
+     * @return Specialite[]
      */
-    public function findAll()
+    public function findAll(): array
     {
-        $sql = "SELECT * FROM specialite";
-        $stmt = $this->pdo->query($sql);
+        $stmt = $this->pdo->query(
+            'SELECT id_specialite, ' . self::COL_LIBELLE . ' AS libelle
+             FROM specialite
+             ORDER BY ' . self::COL_LIBELLE
+        );
 
         $specialites = [];
-
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $specialites[] = new specialite(
-                $row['id_specialite'],
-                $row['nom']
-            );
+            $specialites[] = $this->hydrate($row);
         }
-
         return $specialites;
     }
 
-    /**
-     * Récupérer une spécialité par son ID
-     *
-     * @param $id
-     * @return specialite|null
-     */
-    public function findById($id)
+    public function findById(int $id): ?Specialite
     {
-        $sql = "SELECT * FROM specialite
-                WHERE id_specialite = :id";
-
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->pdo->prepare(
+            'SELECT id_specialite, ' . self::COL_LIBELLE . ' AS libelle
+             FROM specialite
+             WHERE id_specialite = :id'
+        );
         $stmt->execute(['id' => $id]);
-
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($row) {
-            return new specialite(
-                $row['id_specialite'],
-                $row['nom']
-            );
-        }
-
-        return null;
+        return $row ? $this->hydrate($row) : null;
     }
 
-    /**
-     * Ajouter une spécialité
-     *
-     * @param specialite $specialite
-     */
-    public function create($specialite)
+    public function create(Specialite $specialite): int
     {
-        $sql = "INSERT INTO specialite
-                (nom)
-                VALUES (:nom)";
+        $stmt = $this->pdo->prepare(
+            'INSERT INTO specialite (' . self::COL_LIBELLE . ') VALUES (:libelle)'
+        );
+        $stmt->execute(['libelle' => $specialite->getLibelle()]);
+        return (int) $this->pdo->lastInsertId();
+    }
 
-        $stmt = $this->pdo->prepare($sql);
-
+    public function update(Specialite $specialite): void
+    {
+        $stmt = $this->pdo->prepare(
+            'UPDATE specialite
+             SET ' . self::COL_LIBELLE . ' = :libelle
+             WHERE id_specialite = :id'
+        );
         $stmt->execute([
-            'nom' => $specialite->getNom()
+            'id'      => $specialite->getIdSpecialite(),
+            'libelle' => $specialite->getLibelle(),
         ]);
     }
 
-    /**
-     * Modifier une spécialité
-     *
-     * @param specialite $specialite
-     */
-    public function update($specialite)
+    public function delete(int $id): void
     {
-        $sql = "UPDATE specialite
-                SET nom = :nom
-                WHERE id_specialite = :id";
-
-        $stmt = $this->pdo->prepare($sql);
-
-        $stmt->execute([
-            'id' => $specialite->getIdSpecialite(),
-            'nom' => $specialite->getNom()
-        ]);
-    }
-
-    /**
-     * Supprimer une spécialité
-     *
-     * @param $id
-     */
-    public function delete($id)
-    {
-        $sql = "DELETE FROM specialite
-                WHERE id_specialite = :id";
-
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->pdo->prepare('DELETE FROM specialite WHERE id_specialite = :id');
         $stmt->execute(['id' => $id]);
+    }
+
+    private function hydrate(array $row): Specialite
+    {
+        return new Specialite(
+            $row['id_specialite'],
+            $row['libelle']
+        );
     }
 }
