@@ -1,15 +1,15 @@
 <?php
 
-require_once __DIR__ . '/../bdd/Bdd.new.php';
+require_once __DIR__ . '/../bdd/Bdd.php';
 require_once __DIR__ . '/../modele/Utilisateur.php';
 
 class UtilisateurRepository
 {
-    private PDO $pdo;
+    private $connexionBdd;
 
-    public function __construct()
+    public function __construct(?PDO $connexionBdd = null)
     {
-        $this->pdo = (new Bdd())->getConnexionBdd();
+        $this->connexionBdd = $connexionBdd ?? (new Bdd())->getConnexionBdd();
     }
 
     private function hydrate(array $row): Utilisateur
@@ -28,13 +28,13 @@ class UtilisateurRepository
 
     public function findAll(): array
     {
-        $stmt = $this->pdo->query('SELECT * FROM utilisateur');
+        $stmt = $this->connexionBdd->query('SELECT * FROM Utilisateur');
         return array_map([$this, 'hydrate'], $stmt->fetchAll());
     }
 
     public function findById(int $id): ?Utilisateur
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM utilisateur WHERE id_utilisateur = :id');
+        $stmt = $this->connexionBdd->prepare('SELECT * FROM Utilisateur WHERE id_utilisateur = :id');
         $stmt->execute(['id' => $id]);
         $row = $stmt->fetch();
         return $row ? $this->hydrate($row) : null;
@@ -42,7 +42,7 @@ class UtilisateurRepository
 
     public function findByEmail(string $email): ?Utilisateur
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM utilisateur WHERE email = :email');
+        $stmt = $this->connexionBdd->prepare('SELECT * FROM Utilisateur WHERE email = :email');
         $stmt->execute(['email' => $email]);
         $row = $stmt->fetch();
         return $row ? $this->hydrate($row) : null;
@@ -50,8 +50,8 @@ class UtilisateurRepository
 
     public function insert(Utilisateur $u): int
     {
-        $stmt = $this->pdo->prepare(
-            'INSERT INTO utilisateur (nom, prenom, email, mot_de_passe, role, est_valide)
+        $stmt = $this->connexionBdd->prepare(
+            'INSERT INTO Utilisateur (nom, prenom, email, mot_de_passe, role, est_valide)
              VALUES (:nom, :prenom, :email, :mdp, :role, :valide)'
         );
         $stmt->execute([
@@ -62,13 +62,13 @@ class UtilisateurRepository
             'role'   => $u->getRole(),
             'valide' => (int) $u->estValide(),
         ]);
-        return (int) $this->pdo->lastInsertId();
+        return (int) $this->connexionBdd->lastInsertId();
     }
 
     public function update(Utilisateur $u): void
     {
-        $stmt = $this->pdo->prepare(
-            'UPDATE utilisateur
+        $stmt = $this->connexionBdd->prepare(
+            'UPDATE Utilisateur
              SET nom = :nom, prenom = :prenom, email = :email, role = :role, est_valide = :valide
              WHERE id_utilisateur = :id'
         );
@@ -82,9 +82,49 @@ class UtilisateurRepository
         ]);
     }
 
+    public function modifierUtilisateur(Utilisateur $utilisateur): void
+    {
+        $stmt = $this->connexionBdd->prepare(
+            'UPDATE Utilisateur
+             SET nom = :nom, prenom = :prenom, email = :email
+             WHERE id_utilisateur = :id'
+        );
+        $stmt->execute([
+            'nom'    => $utilisateur->getNom(),
+            'prenom' => $utilisateur->getPrenom(),
+            'email'  => $utilisateur->getEmail(),
+            'id'     => $utilisateur->getIdUtilisateur(),
+        ]);
+    }
+
+    public function emailExistePourAutreUtilisateur(string $email, int $idUtilisateur): bool
+    {
+        $stmt = $this->connexionBdd->prepare(
+            'SELECT COUNT(*) FROM Utilisateur
+             WHERE email = :email AND id_utilisateur <> :id'
+        );
+        $stmt->execute(['email' => $email, 'id' => $idUtilisateur]);
+        return (int) $stmt->fetchColumn() > 0;
+    }
+
+    public function modifierMotDePasseUtilisateur(int $idUtilisateur, string $motDePasseHash): void
+    {
+        $stmt = $this->connexionBdd->prepare(
+            'UPDATE Utilisateur SET mot_de_passe = :mot_de_passe
+             WHERE id_utilisateur = :id'
+        );
+        $stmt->execute(['mot_de_passe' => $motDePasseHash, 'id' => $idUtilisateur]);
+    }
+
     public function delete(int $id): void
     {
-        $stmt = $this->pdo->prepare('DELETE FROM utilisateur WHERE id_utilisateur = :id');
+        $stmt = $this->connexionBdd->prepare('DELETE FROM Utilisateur WHERE id_utilisateur = :id');
         $stmt->execute(['id' => $id]);
+    }
+
+    public function getUtilisateursEnAttente(): array
+    {
+        $stmt = $this->connexionBdd->query('SELECT * FROM Utilisateur WHERE est_valide = 0');
+        return array_map([$this, 'hydrate'], $stmt->fetchAll());
     }
 }

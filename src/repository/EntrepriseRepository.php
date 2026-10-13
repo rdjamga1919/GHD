@@ -1,15 +1,15 @@
 <?php
 
-require_once 'Connexion.php';
-require_once 'Entreprise.php';
+require_once __DIR__ . '/../bdd/Bdd.php';
+require_once __DIR__ . '/../modele/Entreprise.php';
 
 class EntrepriseRepository
 {
-    private $pdo;
+    private $connexionBdd;
 
     public function __construct()
     {
-        $this->pdo = Connexion::getPdo();
+        $this->connexionBdd = (new Bdd())->getConnexionBdd();
     }
 
     /**
@@ -19,15 +19,15 @@ class EntrepriseRepository
      */
     public function findAll()
     {
-        $sql = "SELECT * FROM entreprise";
-        $stmt = $this->pdo->query($sql);
+        $sql = "SELECT * FROM Entreprise";
+        $stmt = $this->connexionBdd->query($sql);
 
         $entreprises = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $entreprises[] = new entreprise(
                 $row['id_entreprise'],
-                $row['nom'],
+                $row['nom_entreprise'],
                 $row['adresse'],
                 $row['site_web']
             );
@@ -39,22 +39,22 @@ class EntrepriseRepository
     /**
      * Récupérer une entreprise par son ID
      *
-     * @param $id
+     * @param $id_entreprise
      * @return entreprise|null
      */
-    public function findById($id)
+    public function findById($id_entreprise)
     {
-        $sql = "SELECT * FROM entreprise WHERE id_entreprise = :id";
+        $sql = "SELECT * FROM Entreprise WHERE id_entreprise = :id_entreprise";
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['id' => $id]);
+        $stmt = $this->connexionBdd->prepare($sql);
+        $stmt->execute(['id_entreprise' => $id_entreprise]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
             return new entreprise(
                 $row['id_entreprise'],
-                $row['nom'],
+                $row['nom_entreprise'],
                 $row['adresse'],
                 $row['site_web']
             );
@@ -70,14 +70,14 @@ class EntrepriseRepository
      */
     public function create($entreprise)
     {
-        $sql = "INSERT INTO entreprise
-                (nom, adresse, site_web)
-                VALUES (:nom, :adresse, :site_web)";
+        $sql = "INSERT INTO Entreprise
+                (nom_entreprise, adresse, site_web)
+                VALUES (:nom_entreprise, :adresse, :site_web)";
 
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connexionBdd->prepare($sql);
 
         $stmt->execute([
-            'nom' => $entreprise->getNom(),
+            'nom_entreprise' => $entreprise->getNom(),
             'adresse' => $entreprise->getAdresse(),
             'site_web' => $entreprise->getSiteWeb()
         ]);
@@ -90,17 +90,17 @@ class EntrepriseRepository
      */
     public function update($entreprise)
     {
-        $sql = "UPDATE entreprise
-                SET nom = :nom,
+        $sql = "UPDATE Entreprise
+                SET nom_entreprise = :nom_entreprise,
                     adresse = :adresse,
                     site_web = :site_web
-                WHERE id_entreprise = :id";
+                WHERE id_entreprise = :id_entreprise";
 
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connexionBdd->prepare($sql);
 
         $stmt->execute([
-            'id' => $entreprise->getIdEntreprise(),
-            'nom' => $entreprise->getNom(),
+            'id_entreprise' => $entreprise->getIdEntreprise(),
+            'nom_entreprise' => $entreprise->getNom(),
             'adresse' => $entreprise->getAdresse(),
             'site_web' => $entreprise->getSiteWeb()
         ]);
@@ -109,13 +109,13 @@ class EntrepriseRepository
     /**
      * Supprimer une entreprise
      *
-     * @param $id
+     * @param $id_entreprise
      */
-    public function delete($id)
+    public function delete($id_entreprise)
     {
-        $sql = "DELETE FROM entreprise WHERE id_entreprise = :id";
+        $sql = "DELETE FROM Entreprise WHERE id_entreprise = :id_entreprise";
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['id' => $id]);
+        $stmt = $this->connexionBdd->prepare($sql);
+        $stmt->execute(['id_entreprise' => $id_entreprise]);
     }
 }

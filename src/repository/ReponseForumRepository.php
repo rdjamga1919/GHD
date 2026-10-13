@@ -1,4 +1,8 @@
 <?php
+
+require_once __DIR__ . '/../bdd/Bdd.php';
+require_once __DIR__ . '/../modele/ReponseForum.php';
+
 class ReponseForumRepository
 {
     private $connexionBdd;
@@ -15,17 +19,17 @@ class ReponseForumRepository
         return $req->fetchColumn();
     }
 
-    public function getReponseForum($idReponse)
+    public function getReponseForum($id_reponse)
     {
-        $sql = "SELECT * FROM Reponse_forum WHERE id_reponse = :idReponse";
+        $sql = "SELECT * FROM Reponse_forum WHERE id_reponse = :id_reponse";
         $req = $this->connexionBdd->prepare($sql);
-        $req->bindValue(':idReponse', $idReponse, PDO::PARAM_INT);
+        $req->bindValue(':id_reponse', $id_reponse, PDO::PARAM_INT);
         $req->execute();
         $result = $req->fetch();
         if (!$result) {
             return null;
         }
-        return new ReponseForum($result["id_reponse"], $result["contenu"], $result["date_heure_reponse"], $result["ref_post"], $result["ref_utilisateur"]);
+        return new ReponseForum($result["id_reponse"], $result["ref_post"], $result["contenu"], $result["date_heure_reponse"], $result["ref_utilisateur"]);
     }
 
     public function getAllReponseForum(): array
@@ -36,7 +40,7 @@ class ReponseForumRepository
         $results = $req->fetchAll();
         $tabReponseForum = [];
         foreach ($results as $result) {
-            $tabReponseForum[] = new ReponseForum($result["id_reponse"], $result["contenu"], $result["date_heure_reponse"], $result["ref_post"], $result["ref_utilisateur"]);
+            $tabReponseForum[] = new ReponseForum($result["id_reponse"], $result["ref_post"], $result["contenu"], $result["date_heure_reponse"], $result["ref_utilisateur"]);
         }
         return $tabReponseForum;
     }
@@ -67,11 +71,11 @@ class ReponseForumRepository
         $req->execute();
     }
 
-    public function supprimerReponseForum($idReponse): void
+    public function supprimerReponseForum($id_reponse): void
     {
-        $sql = "DELETE FROM Reponse_forum WHERE id_reponse = :idReponse";
+        $sql = "DELETE FROM Reponse_forum WHERE id_reponse = :id_reponse";
         $req = $this->connexionBdd->prepare($sql);
-        $req->bindValue(':idReponse', $idReponse, PDO::PARAM_INT);
+        $req->bindValue(':id_reponse', $id_reponse, PDO::PARAM_INT);
         $req->execute();
     }
 }

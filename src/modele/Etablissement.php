@@ -65,7 +65,7 @@ class Etablissement
      */
     public function setNom($nom)
     {
-        $this->nom = $nom;
+        $this->nom_etablissement = $nom;
     }
 
     /**

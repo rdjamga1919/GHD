@@ -1,20 +1,20 @@
 <?php
 
-require_once __DIR__ . '/../bdd/Bdd.new.php';
+require_once __DIR__ . '/../bdd/Bdd.php';
 require_once __DIR__ . '/../modele/Partenaire.php';
 require_once __DIR__ . '/UtilisateurRepository.php';
 
 class PartenaireRepository
 {
-    private PDO $pdo;
+    private $connexionBdd;
 
     private const SELECT = 'SELECT u.*, p.id_partenaire, p.poste, p.ref_entreprise
-                            FROM utilisateur u
-                            JOIN partenaire p ON p.ref_utilisateur = u.id_utilisateur';
+                            FROM Utilisateur u
+                            JOIN Partenaire p ON p.ref_utilisateur = u.id_utilisateur';
 
-    public function __construct()
+    public function __construct(?PDO $connexionBdd = null)
     {
-        $this->pdo = (new Bdd())->getConnexionBdd();
+        $this->connexionBdd = $connexionBdd ?? (new Bdd())->getConnexionBdd();
     }
 
     private function hydrate(array $row): Partenaire
@@ -28,12 +28,12 @@ class PartenaireRepository
 
     public function findAll(): array
     {
-        return array_map([$this, 'hydrate'], $this->pdo->query(self::SELECT)->fetchAll());
+        return array_map([$this, 'hydrate'], $this->connexionBdd->query(self::SELECT)->fetchAll());
     }
 
     public function findById(int $idUtilisateur): ?Partenaire
     {
-        $stmt = $this->pdo->prepare(self::SELECT . ' WHERE u.id_utilisateur = :id');
+        $stmt = $this->connexionBdd->prepare(self::SELECT . ' WHERE u.id_utilisateur = :id');
         $stmt->execute(['id' => $idUtilisateur]);
         $row = $stmt->fetch();
         return $row ? $this->hydrate($row) : null;
@@ -41,11 +41,15 @@ class PartenaireRepository
 
     public function insert(Partenaire $p): int
     {
-        $this->pdo->beginTransaction();
+        // Une transaction déjà ouverte reste sous la responsabilité de l'appelant.
+        $transactionPropre = !$this->connexionBdd->inTransaction();
+        if ($transactionPropre) {
+            $this->connexionBdd->beginTransaction();
+        }
         try {
-            $idUtilisateur = (new UtilisateurRepository())->insert($p);
-            $stmt = $this->pdo->prepare(
-                'INSERT INTO partenaire (poste, ref_utilisateur, ref_entreprise)
+            $idUtilisateur = (new UtilisateurRepository($this->connexionBdd))->insert($p);
+            $stmt = $this->connexionBdd->prepare(
+                'INSERT INTO Partenaire (poste, ref_utilisateur, ref_entreprise)
                  VALUES (:poste, :utilisateur, :entreprise)'
             );
             $stmt->execute([
@@ -53,21 +57,29 @@ class PartenaireRepository
                 'utilisateur' => $idUtilisateur,
                 'entreprise'  => $p->getRefEntreprise(),
             ]);
-            $this->pdo->commit();
+            if ($transactionPropre) {
+                $this->connexionBdd->commit();
+            }
             return $idUtilisateur;
         } catch (Throwable $ex) {
-            $this->pdo->rollBack();
+            if ($transactionPropre && $this->connexionBdd->inTransaction()) {
+                $this->connexionBdd->rollBack();
+            }
             throw $ex;
         }
     }
 
     public function update(Partenaire $p): void
     {
-        $this->pdo->beginTransaction();
+        // Une transaction déjà ouverte reste sous la responsabilité de l'appelant.
+        $transactionPropre = !$this->connexionBdd->inTransaction();
+        if ($transactionPropre) {
+            $this->connexionBdd->beginTransaction();
+        }
         try {
-            (new UtilisateurRepository())->update($p);
-            $stmt = $this->pdo->prepare(
-                'UPDATE partenaire SET poste = :poste, ref_entreprise = :entreprise
+            (new UtilisateurRepository($this->connexionBdd))->update($p);
+            $stmt = $this->connexionBdd->prepare(
+                'UPDATE Partenaire SET poste = :poste, ref_entreprise = :entreprise
                  WHERE ref_utilisateur = :utilisateur'
             );
             $stmt->execute([
@@ -75,22 +87,34 @@ class PartenaireRepository
                 'entreprise'  => $p->getRefEntreprise(),
                 'utilisateur' => $p->getIdUtilisateur(),
             ]);
-            $this->pdo->commit();
+            if ($transactionPropre) {
+                $this->connexionBdd->commit();
+            }
         } catch (Throwable $ex) {
-            $this->pdo->rollBack();
+            if ($transactionPropre && $this->connexionBdd->inTransaction()) {
+                $this->connexionBdd->rollBack();
+            }
             throw $ex;
         }
     }
 
     public function delete(int $idUtilisateur): void
     {
-        $this->pdo->beginTransaction();
+        // Une transaction déjà ouverte reste sous la responsabilité de l'appelant.
+        $transactionPropre = !$this->connexionBdd->inTransaction();
+        if ($transactionPropre) {
+            $this->connexionBdd->beginTransaction();
+        }
         try {
-            $this->pdo->prepare('DELETE FROM partenaire WHERE ref_utilisateur = :id')->execute(['id' => $idUtilisateur]);
-            (new UtilisateurRepository())->delete($idUtilisateur);
-            $this->pdo->commit();
+            $this->connexionBdd->prepare('DELETE FROM Partenaire WHERE ref_utilisateur = :id')->execute(['id' => $idUtilisateur]);
+            (new UtilisateurRepository($this->connexionBdd))->delete($idUtilisateur);
+            if ($transactionPropre) {
+                $this->connexionBdd->commit();
+            }
         } catch (Throwable $ex) {
-            $this->pdo->rollBack();
+            if ($transactionPropre && $this->connexionBdd->inTransaction()) {
+                $this->connexionBdd->rollBack();
+            }
             throw $ex;
         }
     }

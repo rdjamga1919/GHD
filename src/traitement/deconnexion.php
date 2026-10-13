@@ -18,5 +18,5 @@ if (ini_get('session.use_cookies')) {
 
 session_destroy();
 
-header('Location: /connexion.php?deconnected=1');
+header('Location: /GHD/public/connexion.php?deconnected=1');
 exit;
