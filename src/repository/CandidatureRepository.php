@@ -1,4 +1,8 @@
 <?php
+
+require_once __DIR__ . '/../bdd/Bdd.php';
+require_once __DIR__ . '/../modele/Candidature.php';
+
 class CandidatureRepository
 {
     private $connexionBdd;
@@ -39,6 +43,17 @@ class CandidatureRepository
             $tabCandidature[] = new Candidature($result["id_candidature"], $result["motivation"], $result["date_candidature"], $result["statut"], $result["ref_utilisateur"], $result["ref_offre"]);
         }
         return $tabCandidature;
+    }
+
+    // Vrai si cet utilisateur (étudiant) a déjà postulé à cette offre
+    public function candidatureExiste($refUtilisateur, $refOffre): bool
+    {
+        $sql = "SELECT COUNT(*) FROM Candidature WHERE ref_utilisateur = :ref_utilisateur AND ref_offre = :ref_offre";
+        $req = $this->connexionBdd->prepare($sql);
+        $req->bindValue(':ref_utilisateur', $refUtilisateur, PDO::PARAM_INT);
+        $req->bindValue(':ref_offre', $refOffre, PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetchColumn() > 0;
     }
 
     public function ajouterCandidature(Candidature $candidature): void
