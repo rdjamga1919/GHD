@@ -39,6 +39,29 @@ class PartenaireRepository
         return $row ? $this->hydrate($row) : null;
     }
 
+    // Partenaires (comptes validés) rattachés à une entreprise : jointure Partenaire / Utilisateur
+    public function getPartenairesParEntreprise(int $idEntreprise): array
+    {
+        $stmt = $this->connexionBdd->prepare(
+            self::SELECT . ' WHERE p.ref_entreprise = :entreprise AND u.est_valide = 1
+                             ORDER BY u.nom, u.prenom'
+        );
+        $stmt->bindValue(':entreprise', $idEntreprise, PDO::PARAM_INT);
+        $stmt->execute();
+        return array_map([$this, 'hydrate'], $stmt->fetchAll());
+    }
+
+    // Rattache le partenaire identifié par $idUtilisateur (toujours l'id de la SESSION) à une entreprise
+    public function modifierPartenaire(int $idUtilisateur, int $refEntreprise): void
+    {
+        $stmt = $this->pdo->prepare(
+            'UPDATE partenaire SET ref_entreprise = :entreprise WHERE ref_utilisateur = :utilisateur'
+        );
+        $stmt->bindValue(':entreprise', $refEntreprise, PDO::PARAM_INT);
+        $stmt->bindValue(':utilisateur', $idUtilisateur, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
     public function insert(Partenaire $p): int
     {
         // Une transaction déjà ouverte reste sous la responsabilité de l'appelant.
@@ -118,4 +141,5 @@ class PartenaireRepository
             throw $ex;
         }
     }
+
 }

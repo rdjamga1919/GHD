@@ -16,8 +16,7 @@ unset($_SESSION['erreur_connexion']);
     <p style="color:red;"><?= htmlspecialchars($erreur) ?></p>
 <?php endif; ?>
 
-<form action="../src/traitement/connexion_traitement.php" method="POST">
-    <label for="email">Email</label>
+<form action="../src/traitement/traitement_connexion.php" method="POST">    <label for="email">Email</label>
     <input type="email" id="email" name="email" required>
 
     <label for="mot_de_passe">Mot de passe</label>
