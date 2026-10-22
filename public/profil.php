@@ -49,8 +49,8 @@ switch ($_SESSION['role']) {
         break;
 
     case 'partenaire':
-        http_response_code(501);
-        exit("Le profil partenaire n'est pas encore disponible.");
+        require __DIR__ . '/../views/profils/partenaireView.php';
+        break;
 
     default:
         http_response_code(403);
@@ -80,6 +80,7 @@ switch ($_SESSION['role']) {
     case 'medecin':
         require __DIR__ . '/../views/profils/medecinView.php';
         break;
+
 }
 
 ?>

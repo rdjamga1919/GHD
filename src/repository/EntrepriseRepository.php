@@ -1,3 +1,4 @@
+
 <?php
 
 require_once __DIR__ . '/../bdd/Bdd.php';
@@ -12,62 +13,101 @@ class EntrepriseRepository
         $this->connexionBdd = (new Bdd())->getConnexionBdd();
     }
 
-    /**
-     * Récupérer toutes les entreprises
-     *
-     * @return entreprise[]
-     */
+    private function hydrate($row)
+    {
+        return new Entreprise(
+            (int) $row['id_entreprise'],
+            $row['nom_entreprise'],
+            $row['adresse'],
+            $row['site_web']
+        );
+    }
+
+    // Récupérer toutes les entreprises
     public function findAll()
     {
-        $sql = "SELECT * FROM Entreprise";
+        $sql = "SELECT * FROM Entreprise ORDER BY nom_entreprise";
         $stmt = $this->connexionBdd->query($sql);
 
         $entreprises = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $entreprises[] = new entreprise(
-                $row['id_entreprise'],
-                $row['nom_entreprise'],
-                $row['adresse'],
-                $row['site_web']
-            );
+            $entreprises[] = $this->hydrate($row);
         }
 
         return $entreprises;
     }
 
-    /**
-     * Récupérer une entreprise par son ID
-     *
-     * @param $id_entreprise
-     * @return entreprise|null
-     */
+    // Méthode utilisée par Onésime
+    public function getAllEntreprises()
+    {
+        return $this->findAll();
+    }
+
+    // Récupérer une entreprise par son ID
     public function findById($id_entreprise)
     {
         $sql = "SELECT * FROM Entreprise WHERE id_entreprise = :id_entreprise";
-
         $stmt = $this->connexionBdd->prepare($sql);
         $stmt->execute(['id_entreprise' => $id_entreprise]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($row) {
-            return new entreprise(
-                $row['id_entreprise'],
-                $row['nom_entreprise'],
-                $row['adresse'],
-                $row['site_web']
-            );
-        }
-
-        return null;
+        return $row ? $this->hydrate($row) : null;
     }
 
-    /**
-     * Ajouter une entreprise
-     *
-     * @param entreprise $entreprise
-     */
+    // Méthode utilisée par Onésime
+    public function getEntreprise($idEntreprise)
+    {
+        return $this->findById($idEntreprise);
+    }
+
+    // Rechercher une entreprise par son nom
+    public function rechercherEntreprises($recherche)
+    {
+        $sql = "SELECT * FROM Entreprise
+                WHERE nom_entreprise LIKE :recherche
+                ORDER BY nom_entreprise";
+
+        $stmt = $this->connexionBdd->prepare($sql);
+        $stmt->execute([
+            'recherche' => '%' . addcslashes($recherche, '%_\\') . '%'
+        ]);
+
+        $entreprises = [];
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $entreprises[] = $this->hydrate($row);
+        }
+
+        return $entreprises;
+    }
+
+    // Rechercher une entreprise par son site web
+    public function getEntrepriseBySiteWeb($siteWeb)
+    {
+        $sql = "SELECT * FROM Entreprise WHERE site_web = :site_web";
+        $stmt = $this->connexionBdd->prepare($sql);
+        $stmt->execute(['site_web' => $siteWeb]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $row ? $this->hydrate($row) : null;
+    }
+
+    // Vérifier qu'une entreprise existe
+    public function entrepriseExiste($idEntreprise)
+    {
+        $sql = "SELECT COUNT(*) FROM Entreprise
+                WHERE id_entreprise = :id_entreprise";
+
+        $stmt = $this->connexionBdd->prepare($sql);
+        $stmt->execute(['id_entreprise' => $idEntreprise]);
+
+        return $stmt->fetchColumn() > 0;
+    }
+
+    // Ajouter une entreprise
     public function create($entreprise)
     {
         $sql = "INSERT INTO Entreprise
@@ -81,13 +121,17 @@ class EntrepriseRepository
             'adresse' => $entreprise->getAdresse(),
             'site_web' => $entreprise->getSiteWeb()
         ]);
+
+        return (int) $this->connexionBdd->lastInsertId();
     }
 
-    /**
-     * Modifier une entreprise
-     *
-     * @param entreprise $entreprise
-     */
+    // Méthode utilisée par Onésime
+    public function ajouterEntreprise(Entreprise $entreprise)
+    {
+        return $this->create($entreprise);
+    }
+
+    // Modifier une entreprise
     public function update($entreprise)
     {
         $sql = "UPDATE Entreprise
@@ -106,11 +150,7 @@ class EntrepriseRepository
         ]);
     }
 
-    /**
-     * Supprimer une entreprise
-     *
-     * @param $id_entreprise
-     */
+    // Supprimer une entreprise
     public function delete($id_entreprise)
     {
         $sql = "DELETE FROM Entreprise WHERE id_entreprise = :id_entreprise";
