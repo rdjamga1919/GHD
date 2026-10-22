@@ -42,7 +42,7 @@ class PartenaireRepository
     // Partenaires (comptes validés) rattachés à une entreprise : jointure Partenaire / Utilisateur
     public function getPartenairesParEntreprise(int $idEntreprise): array
     {
-        $stmt = $this->pdo->prepare(
+        $stmt = $this->connexionBdd->prepare(
             self::SELECT . ' WHERE p.ref_entreprise = :entreprise AND u.est_valide = 1
                              ORDER BY u.nom, u.prenom'
         );
@@ -141,4 +141,5 @@ class PartenaireRepository
             throw $ex;
         }
     }
+
 }

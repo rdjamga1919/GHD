@@ -49,7 +49,29 @@ switch ($_SESSION['role']) {
         break;
 
     case 'partenaire':
-        require __DIR__ . '/../views/profils/partenaireView.php';
+
+        require_once __DIR__ . '/../src/repository/PartenaireRepository.php';
+        require_once __DIR__ . '/../src/repository/EntrepriseRepository.php';
+
+        // Récupérer le partenaire connecté
+        $repo = new PartenaireRepository();
+
+        $partenaire = $repo->findById(
+                (int) $_SESSION['utilisateur_id']
+        );
+
+        if ($partenaire === null) {
+            http_response_code(404);
+            exit("Profil partenaire introuvable.");
+        }
+
+        // Récupérer son entreprise
+        $repoEntreprise = new EntrepriseRepository();
+
+        $entreprise = $repoEntreprise->getEntreprise(
+                $partenaire->getRefEntreprise()
+        );
+
         break;
 
     default:
@@ -79,6 +101,10 @@ switch ($_SESSION['role']) {
 
     case 'medecin':
         require __DIR__ . '/../views/profils/medecinView.php';
+        break;
+
+    case 'partenaire':
+        require __DIR__ . '/../views/profils/partenaireView.php';
         break;
 
 }
