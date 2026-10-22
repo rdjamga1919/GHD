@@ -1,64 +1,88 @@
+
 <?php
-require_once __DIR__ . '/../src/traitement/traitement_verif_session.php';
-exigerConnexion();
 
-$medecin = null;
-$specialites = [];
-$hopitaux = [];
+session_start();
 
-if ($_SESSION['role'] === 'medecin') {
-    require_once __DIR__ . '/../src/repository/MedecinRepository.php';
+require_once __DIR__ . '/../src/inclues/authentification.php';
 
-    $repo = new MedecinRepository();
-    $medecin = $repo->findById((int) $_SESSION['utilisateur_id']);
+requireLogin();
 
-    if ($medecin !== null) {
+switch ($_SESSION['role']) {
+
+    case 'etudiant':
+
+        require_once __DIR__ . '/../src/repository/EtudiantRepository.php';
+        require_once __DIR__ . '/../src/repository/EtablissementRepository.php';
+
+        $repo = new EtudiantRepository();
+        $etudiant = $repo->findById((int) $_SESSION['utilisateur_id']);
+
+        if ($etudiant === null) {
+            http_response_code(404);
+            exit("Profil étudiant introuvable.");
+        }
+
+        // Récupérer l'établissement de l'étudiant
+        $repoEtablissement = new EtablissementRepository();
+
+        $etablissement = $repoEtablissement->findById(
+                $etudiant->getRefEtablissement()
+        );
+
+        break;
+
+    case 'medecin':
+
+        require_once __DIR__ . '/../src/repository/MedecinRepository.php';
+
+        $repo = new MedecinRepository();
+        $medecin = $repo->findById((int) $_SESSION['utilisateur_id']);
+
+        if ($medecin === null) {
+            http_response_code(404);
+            exit("Profil médecin introuvable.");
+        }
+
         $specialites = $repo->getSpecialites($medecin->getIdMedecin());
         $hopitaux = $repo->getHopitaux($medecin->getIdMedecin());
-    }
+
+        break;
+
+    case 'partenaire':
+        http_response_code(501);
+        exit("Le profil partenaire n'est pas encore disponible.");
+
+    default:
+        http_response_code(403);
+        exit("Accès non autorisé.");
 }
+
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <title>Mon profil</title>
 </head>
+
 <body>
 
-<?php if ($medecin !== null): ?>
+<?php
 
-    <h2>Mon profil</h2>
-    <p>Nom : <?= htmlspecialchars($medecin->getNom()) ?></p>
-    <p>Prénom : <?= htmlspecialchars($medecin->getPrenom()) ?></p>
-    <p>Email : <?= htmlspecialchars($medecin->getEmail()) ?></p>
-    <p>N° RPPS : <?= htmlspecialchars($medecin->getNumeroRpps()) ?></p>
+switch ($_SESSION['role']) {
 
-    <h3>Spécialités</h3>
-    <?php if (empty($specialites)): ?>
-        <p>Aucune spécialité renseignée.</p>
-    <?php else: ?>
-        <ul>
-            <?php foreach ($specialites as $s): ?>
-                <li><?= htmlspecialchars($s['libelle_specialite']) ?></li>
-            <?php endforeach; ?>
-        </ul>
-    <?php endif; ?>
+    case 'etudiant':
+        require __DIR__ . '/../views/profils/etudiantView.php';
+        break;
 
-    <h3>Hôpitaux d'exercice</h3>
-    <?php if (empty($hopitaux)): ?>
-        <p>Aucun hôpital renseigné.</p>
-    <?php else: ?>
-        <ul>
-            <?php foreach ($hopitaux as $h): ?>
-                <li><?= htmlspecialchars($h['nom_hopital']) ?> (<?= htmlspecialchars($h['commune']) ?>)</li>
-            <?php endforeach; ?>
-        </ul>
-    <?php endif; ?>
+    case 'medecin':
+        require __DIR__ . '/../views/profils/medecinView.php';
+        break;
+}
 
-    <a href="modifier_profil.php">Modifier mon profil</a>
-
-<?php endif; ?>
+?>
 
 </body>
 </html>
