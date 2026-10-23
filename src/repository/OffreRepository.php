@@ -84,4 +84,40 @@ class OffreRepository{
         $req->bindValue(':idOffre', $idOffre, PDO::PARAM_INT);
         $req->execute();
     }
+
+    /**
+     * Liste des offres avec le nom de l'entreprise (offres ouvertes en premier)
+     */
+    public function getOffresAvecEntreprise(): array
+    {
+        $sql = "SELECT o.id_offre, o.titre, o.description, o.type_d_offre, o.etat,
+                       o.salaire, o.date_publication,
+                       e.id_entreprise, e.nom_entreprise
+                FROM offre o
+                LEFT JOIN partenaire p ON p.ref_utilisateur = o.ref_utilisateur
+                LEFT JOIN entreprise e ON e.id_entreprise = p.ref_entreprise
+                ORDER BY (o.etat = 'ouverte') DESC, o.date_publication DESC";
+        $req = $this->connexionBdd->prepare($sql);
+        $req->execute();
+        return $req->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Détail d'une offre avec son entreprise, ou null si elle n'existe pas
+     */
+    public function getOffreAvecEntreprise(int $idOffre): ?array
+    {
+        $sql = "SELECT o.id_offre, o.titre, o.description, o.missions, o.type_d_offre,
+                       o.etat, o.salaire, o.date_publication,
+                       e.id_entreprise, e.nom_entreprise, e.adresse, e.site_web
+                FROM offre o
+                LEFT JOIN partenaire p ON p.ref_utilisateur = o.ref_utilisateur
+                LEFT JOIN entreprise e ON e.id_entreprise = p.ref_entreprise
+                WHERE o.id_offre = :id";
+        $req = $this->connexionBdd->prepare($sql);
+        $req->bindValue(':id', $idOffre, PDO::PARAM_INT);
+        $req->execute();
+        $row = $req->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
 }
