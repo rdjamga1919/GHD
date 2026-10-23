@@ -36,5 +36,22 @@
     </ul>
 <?php endif; ?>
 
+<h3>Je suis professeur dans…</h3>
+
+<?php if (empty($etablissements)): ?>
+    <p>Vous n'êtes rattaché à aucun établissement d'enseignement.</p>
+<?php else: ?>
+    <ul>
+        <?php foreach ($etablissements as $e): ?>
+            <li>
+                <?= htmlspecialchars($e['nom_etablissement']) ?>
+                <?php if (!empty($e['adresse'])): ?>
+                    (<?= htmlspecialchars($e['adresse']) ?>)
+                <?php endif; ?>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+<?php endif; ?>
+
 <a href="modifier_profil.php">Modifier mon profil</a>
 
