@@ -1,6 +1,11 @@
 <?php
-require_once __DIR__ . '/../src/traitement/traitement_verif_session.php';
-exigerConnexion();
+require_once __DIR__ . '/../src/inclues/authentification.php';
+requireLogin();
+
+// Jeton anti-CSRF utilisé par les formulaires d'ajout et de retrait
+if (empty($_SESSION['csrf'])) {
+    $_SESSION['csrf'] = bin2hex(random_bytes(32));
+}
 
 $medecin = null;
 $specialites = [];
@@ -17,6 +22,7 @@ if ($_SESSION['role'] === 'medecin') {
     require_once __DIR__ . '/../src/repository/EtablissementRepository.php';
 
     $repo = new MedecinRepository();
+    // On utilise l'identifiant de la SESSION, jamais un id passé dans l'URL
     $medecin = $repo->findById((int) $_SESSION['utilisateur_id']);
 
     if ($medecin !== null) {
@@ -43,8 +49,10 @@ if ($_SESSION['role'] === 'medecin') {
 </head>
 <body>
 
-<?php if ($flash): ?>
-    <p><strong><?= htmlspecialchars($flash) ?></strong></p>
+<?php if (is_array($flash)): ?>
+    <p class="message message-<?= $flash[0] === 'succes' ? 'succes' : 'erreur' ?>">
+        <?= htmlspecialchars($flash[1]) ?>
+    </p>
 <?php endif; ?>
 
 <?php if ($medecin !== null): ?>
@@ -88,7 +96,8 @@ if ($_SESSION['role'] === 'medecin') {
                     <?php if (!empty($e['adresse'])): ?>
                         (<?= htmlspecialchars($e['adresse']) ?>)
                     <?php endif; ?>
-                    <form method="post" action="../src/traitement/traitement_enseigner.php" style="display:inline">
+                    <form method="post" action="../src/traitement/traitement_enseigner.php" class="form-retrait">
+                        <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
                         <input type="hidden" name="action" value="supprimer">
                         <input type="hidden" name="id_etablissement" value="<?= (int) $e['id_etablissement'] ?>">
                         <button type="submit">Retirer</button>
@@ -107,12 +116,15 @@ if ($_SESSION['role'] === 'medecin') {
     <?php if ($recherche !== ''): ?>
         <?php if (empty($resultats)): ?>
             <p>Aucun établissement trouvé pour « <?= htmlspecialchars($recherche) ?> ».</p>
+            <!-- À brancher sur la page de création d'établissement de Serge (ne pas dupliquer son formulaire) -->
+            <p><a href="etablissement.php">Votre établissement n'existe pas ? Le créer</a></p>
         <?php else: ?>
             <ul>
                 <?php foreach ($resultats as $e): ?>
                     <li>
                         <?= htmlspecialchars($e->getNom()) ?>
-                        <form method="post" action="../src/traitement/traitement_enseigner.php" style="display:inline">
+                        <form method="post" action="../src/traitement/traitement_enseigner.php" class="form-retrait">
+                            <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
                             <input type="hidden" name="action" value="ajouter">
                             <input type="hidden" name="id_etablissement" value="<?= (int) $e->getIdEtablissement() ?>">
                             <button type="submit">Ajouter</button>
