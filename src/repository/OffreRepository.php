@@ -108,7 +108,7 @@ class OffreRepository{
     public function getOffreAvecEntreprise(int $idOffre): ?array
     {
         $sql = "SELECT o.id_offre, o.titre, o.description, o.missions, o.type_d_offre,
-                       o.etat, o.salaire, o.date_publication,
+                       o.etat, o.salaire, o.date_publication, o.ref_utilisateur,
                        e.id_entreprise, e.nom_entreprise, e.adresse, e.site_web
                 FROM offre o
                 LEFT JOIN partenaire p ON p.ref_utilisateur = o.ref_utilisateur
@@ -119,5 +119,77 @@ class OffreRepository{
         $req->execute();
         $row = $req->fetch(PDO::FETCH_ASSOC);
         return $row ?: null;
+    }
+
+    public function partenaireExiste(int $idUtilisateur): bool
+    {
+        $req = $this->connexionBdd->prepare('SELECT 1 FROM partenaire WHERE ref_utilisateur = :u LIMIT 1');
+        $req->execute(['u' => $idUtilisateur]);
+        return (bool) $req->fetchColumn();
+    }
+
+    /** Offre appartenant à cet utilisateur, ou null */
+    public function getOffreDuProprietaire(int $idOffre, int $idUtilisateur): ?array
+    {
+        $req = $this->connexionBdd->prepare(
+            'SELECT id_offre, titre, description, missions, salaire, type_d_offre, etat
+             FROM offre WHERE id_offre = :id AND ref_utilisateur = :u'
+        );
+        $req->execute(['id' => $idOffre, 'u' => $idUtilisateur]);
+        $row = $req->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
+    /** Utilisé aussi par postuler.php pour refuser une candidature sur une offre fermée */
+    public function estOuverte(int $idOffre): bool
+    {
+        $req = $this->connexionBdd->prepare("SELECT 1 FROM offre WHERE id_offre = :id AND etat = 'ouverte'");
+        $req->execute(['id' => $idOffre]);
+        return (bool) $req->fetchColumn();
+    }
+
+    public function insert(array $d, int $idUtilisateur): int
+    {
+        $req = $this->connexionBdd->prepare(
+            "INSERT INTO offre (titre, description, missions, salaire, type_d_offre, etat, ref_utilisateur)
+             VALUES (:titre, :description, :missions, :salaire, :type, 'ouverte', :u)"
+        );
+        $req->execute([
+            'titre' => $d['titre'], 'description' => $d['description'], 'missions' => $d['missions'],
+            'salaire' => $d['salaire'], 'type' => $d['type_d_offre'], 'u' => $idUtilisateur,
+        ]);
+        return (int) $this->connexionBdd->lastInsertId();
+    }
+
+    /** Modifie une offre ouverte du propriétaire. L'état n'est pas modifiable ici. */
+    public function update(int $idOffre, array $d, int $idUtilisateur): bool
+    {
+        $req = $this->connexionBdd->prepare(
+            "UPDATE offre SET titre = :titre, description = :description, missions = :missions,
+                    salaire = :salaire, type_d_offre = :type
+             WHERE id_offre = :id AND ref_utilisateur = :u AND etat = 'ouverte'"
+        );
+        $req->execute([
+            'titre' => $d['titre'], 'description' => $d['description'], 'missions' => $d['missions'],
+            'salaire' => $d['salaire'], 'type' => $d['type_d_offre'], 'id' => $idOffre, 'u' => $idUtilisateur,
+        ]);
+
+        if ($req->rowCount() === 1) {
+            return true;
+        }
+
+        // Valeurs identiques : rien n'a changé, mais l'offre est bien au propriétaire et ouverte
+        $offre = $this->getOffreDuProprietaire($idOffre, $idUtilisateur);
+        return $offre !== null && $offre['etat'] === 'ouverte';
+    }
+
+    public function fermerOffre(int $idOffre, int $idUtilisateur): bool
+    {
+        $req = $this->connexionBdd->prepare(
+            "UPDATE offre SET etat = 'fermee'
+             WHERE id_offre = :id AND ref_utilisateur = :u AND etat = 'ouverte'"
+        );
+        $req->execute(['id' => $idOffre, 'u' => $idUtilisateur]);
+        return $req->rowCount() === 1;
     }
 }

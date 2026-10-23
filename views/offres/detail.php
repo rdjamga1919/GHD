@@ -6,6 +6,10 @@
 </head>
 <body>
 
+<?php if ($flash): ?>
+    <p class="message message-<?= $flash[0] === 'succes' ? 'succes' : 'erreur' ?>"><?= htmlspecialchars($flash[1]) ?></p>
+<?php endif; ?>
+
 <?php if ($offre === null): ?>
 
     <h2>Offre introuvable</h2>
@@ -38,6 +42,16 @@
 
     <h3>Missions</h3>
     <p><?= nl2br(htmlspecialchars($offre['missions'])) ?></p>
+
+    <?php if ($estProprietaire && $ouverte): ?>
+        <p><a href="modifier_offre.php?id=<?= (int) $offre['id_offre'] ?>">Modifier l'offre</a></p>
+        <form method="post" action="../src/traitement/traitement_offre.php">
+            <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
+            <input type="hidden" name="action" value="fermer">
+            <input type="hidden" name="id_offre" value="<?= (int) $offre['id_offre'] ?>">
+            <button type="submit">Fermer l'offre</button>
+        </form>
+    <?php endif; ?>
 
 <?php endif; ?>
 

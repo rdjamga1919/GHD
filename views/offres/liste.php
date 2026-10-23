@@ -8,6 +8,14 @@
 
 <h2>Offres</h2>
 
+<?php if ($flash): ?>
+    <p class="message message-<?= $flash[0] === 'succes' ? 'succes' : 'erreur' ?>"><?= htmlspecialchars($flash[1]) ?></p>
+<?php endif; ?>
+
+<?php if ($estPartenaire): ?>
+    <p><a href="creer_offre.php">Créer une offre</a></p>
+<?php endif; ?>
+
 <?php if (empty($offres)): ?>
     <p class="etat-vide">Aucune offre n'est disponible pour le moment.</p>
 <?php else: ?>
