@@ -2,6 +2,9 @@
 
 require_once __DIR__ . '/../repository/MedecinRepository.php';
 
+require_once __DIR__ . '/../repository/EnseignerRepository.php';
+require_once __DIR__ . '/../repository/EtablissementRepository.php';
+
 $repo = new MedecinRepository();
 
 $medecin = $repo->findById((int) $_SESSION['utilisateur_id']);
@@ -60,6 +63,9 @@ $specialites = [];
 $hopitaux = [];
 $specialitesDispo = [];
 $hopitauxDispo = [];
+$etablissements = [];
+$resultats = [];
+$recherche = trim($_GET['q'] ?? '');
 
 if ($medecin !== null) {
 
@@ -80,4 +86,15 @@ if ($medecin !== null) {
         $repo->getTousHopitaux(),
         fn($h) => !in_array($h['id_hopital'], $idsHopitaux)
     );
+
+    $etablissements = (new EnseignerRepository())->getEtablissementsDuMedecin($idMedecin);
+
+    if ($recherche !== '') {
+        $idsEtablissements = array_column($etablissements, 'id_etablissement');
+        foreach ((new EtablissementRepository())->rechercherParNom($recherche) as $e) {
+            if (!in_array($e->getIdEtablissement(), $idsEtablissements)) {
+                $resultats[] = $e;
+            }
+        }
+    }
 }
