@@ -45,6 +45,25 @@ class CandidatureRepository
         return $tabCandidature;
     }
 
+    // Candidatures d'UN étudiant, avec l'offre et l'entreprise (celle du partenaire qui a publié l'offre).
+    // $refUtilisateur doit toujours venir de la session, jamais d'un paramètre de la requête.
+    public function findByEtudiant($refUtilisateur): array
+    {
+        $sql = "SELECT c.id_candidature, c.date_candidature, c.statut,
+                       o.id_offre, o.titre AS titre_offre,
+                       e.id_entreprise, e.nom_entreprise
+                FROM Candidature c
+                JOIN Offre o ON o.id_offre = c.ref_offre
+                LEFT JOIN Partenaire p ON p.ref_utilisateur = o.ref_utilisateur
+                LEFT JOIN Entreprise e ON e.id_entreprise = p.ref_entreprise
+                WHERE c.ref_utilisateur = :ref_utilisateur
+                ORDER BY c.date_candidature DESC, c.id_candidature DESC";
+        $req = $this->connexionBdd->prepare($sql);
+        $req->bindValue(':ref_utilisateur', $refUtilisateur, PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     // Vrai si cet utilisateur (étudiant) a déjà postulé à cette offre
     public function candidatureExiste($refUtilisateur, $refOffre): bool
     {
