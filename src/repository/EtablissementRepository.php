@@ -120,4 +120,54 @@ class EtablissementRepository
         $stmt = $this->connexionBdd->prepare($sql);
         $stmt->execute(['id' => $id]);
     }
+
+    // Rechercher les établissements par leur nom
+    public function rechercherParNom($nom): array
+    {
+        $sql = "SELECT * FROM Etablissement
+                WHERE nom_etablissement LIKE :nom
+                ORDER BY nom_etablissement";
+
+        $stmt = $this->connexionBdd->prepare($sql);
+        $stmt->execute([
+            'nom' => '%' . addcslashes($nom, '%_\\') . '%'
+        ]);
+
+        $etablissements = [];
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $etablissements[] = new Etablissement(
+                $row['id_etablissement'],
+                $row['nom_etablissement'],
+                $row['adresse'],
+                $row['site_web']
+            );
+        }
+
+        return $etablissements;
+    }
+
+    // Chercher un établissement avec son site web
+    public function getEtablissementBySiteWeb($siteWeb): ?Etablissement
+    {
+        $sql = "SELECT * FROM Etablissement
+                WHERE site_web = :site_web";
+
+        $stmt = $this->connexionBdd->prepare($sql);
+        $stmt->execute(['site_web' => $siteWeb]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
+            return new Etablissement(
+                $row['id_etablissement'],
+                $row['nom_etablissement'],
+                $row['adresse'],
+                $row['site_web']
+            );
+        }
+
+        return null;
+    }
+
 }
