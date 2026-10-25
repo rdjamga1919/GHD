@@ -1,6 +1,6 @@
 <?php
 // public/index.php
-//opk
+//o
 declare(strict_types=1);
 
 if (session_status() === PHP_SESSION_NONE) {
