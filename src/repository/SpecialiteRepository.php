@@ -1,15 +1,15 @@
 <?php
 
-require_once 'Connexion.php';
-require_once 'Specialite.php';
+require_once __DIR__ . '/../bdd/Bdd.php';
+require_once __DIR__ . '/../modele/Specialite.php';
 
 class SpecialiteRepository
 {
-    private $pdo;
+    private $connexionBdd;
 
     public function __construct()
     {
-        $this->pdo = Connexion::getPdo();
+        $this->connexionBdd = (new Bdd())->getConnexionBdd();
     }
 
     /**
@@ -19,15 +19,15 @@ class SpecialiteRepository
      */
     public function findAll()
     {
-        $sql = "SELECT * FROM specialite";
-        $stmt = $this->pdo->query($sql);
+        $sql = "SELECT * FROM Specialite";
+        $stmt = $this->connexionBdd->query($sql);
 
         $specialites = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $specialites[] = new specialite(
                 $row['id_specialite'],
-                $row['nom']
+                $row['libelle_specialite']
             );
         }
 
@@ -37,23 +37,23 @@ class SpecialiteRepository
     /**
      * Récupérer une spécialité par son ID
      *
-     * @param $id
+     * @param $id_specialite
      * @return specialite|null
      */
-    public function findById($id)
+    public function findById($id_specialite)
     {
-        $sql = "SELECT * FROM specialite
-                WHERE id_specialite = :id";
+        $sql = "SELECT * FROM Specialite
+                WHERE id_specialite = :id_specialite";
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['id' => $id]);
+        $stmt = $this->connexionBdd->prepare($sql);
+        $stmt->execute(['id_specialite' => $id_specialite]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
             return new specialite(
                 $row['id_specialite'],
-                $row['nom']
+                $row['libelle_specialite']
             );
         }
 
@@ -67,14 +67,14 @@ class SpecialiteRepository
      */
     public function create($specialite)
     {
-        $sql = "INSERT INTO specialite
-                (nom)
-                VALUES (:nom)";
+        $sql = "INSERT INTO Specialite
+                (libelle_specialite)
+                VALUES (:libelle_specialite)";
 
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connexionBdd->prepare($sql);
 
         $stmt->execute([
-            'nom' => $specialite->getNom()
+            'libelle_specialite' => $specialite->getLibelle()
         ]);
     }
 
@@ -85,29 +85,29 @@ class SpecialiteRepository
      */
     public function update($specialite)
     {
-        $sql = "UPDATE specialite
-                SET nom = :nom
-                WHERE id_specialite = :id";
+        $sql = "UPDATE Specialite
+                SET libelle_specialite = :libelle_specialite
+                WHERE id_specialite = :id_specialite";
 
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connexionBdd->prepare($sql);
 
         $stmt->execute([
-            'id' => $specialite->getIdSpecialite(),
-            'nom' => $specialite->getNom()
+            'id_specialite' => $specialite->getIdSpecialite(),
+            'libelle_specialite' => $specialite->getLibelle()
         ]);
     }
 
     /**
      * Supprimer une spécialité
      *
-     * @param $id
+     * @param $id_specialite
      */
-    public function delete($id)
+    public function delete($id_specialite)
     {
-        $sql = "DELETE FROM specialite
-                WHERE id_specialite = :id";
+        $sql = "DELETE FROM Specialite
+                WHERE id_specialite = :id_specialite";
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['id' => $id]);
+        $stmt = $this->connexionBdd->prepare($sql);
+        $stmt->execute(['id_specialite' => $id_specialite]);
     }
 }

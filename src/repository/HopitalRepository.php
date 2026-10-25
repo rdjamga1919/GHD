@@ -1,15 +1,15 @@
 <?php
 
-require_once 'Connexion.php';
-require_once 'Hopital.php';
+require_once __DIR__ . '/../bdd/Bdd.php';
+require_once __DIR__ . '/../modele/Hopital.php';
 
 class HopitalRepository
 {
-    private $pdo;
+    private $connexionBdd;
 
     public function __construct()
     {
-        $this->pdo = Connexion::getPdo();
+        $this->connexionBdd = (new Bdd())->getConnexionBdd();
     }
 
     /**
@@ -19,16 +19,16 @@ class HopitalRepository
      */
     public function findAll()
     {
-        $sql = "SELECT * FROM hopital";
-        $stmt = $this->pdo->query($sql);
+        $sql = "SELECT * FROM Hopital";
+        $stmt = $this->connexionBdd->query($sql);
 
         $hopitaux = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $hopitaux[] = new hopital(
                 $row['id_hopital'],
-                $row['nom'],
-                $row['localisation']
+                $row['nom_hopital'],
+                $row['commune']
             );
         }
 
@@ -38,24 +38,24 @@ class HopitalRepository
     /**
      * Récupérer un hôpital par son ID
      *
-     * @param $id
+     * @param $id_hopital
      * @return hopital|null
      */
-    public function findById($id)
+    public function findById($id_hopital)
     {
-        $sql = "SELECT * FROM hopital
-                WHERE id_hopital = :id";
+        $sql = "SELECT * FROM Hopital
+                WHERE id_hopital = :id_hopital";
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['id' => $id]);
+        $stmt = $this->connexionBdd->prepare($sql);
+        $stmt->execute(['id_hopital' => $id_hopital]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
             return new hopital(
                 $row['id_hopital'],
-                $row['nom'],
-                $row['localisation']
+                $row['nom_hopital'],
+                $row['commune']
             );
         }
 
@@ -69,15 +69,15 @@ class HopitalRepository
      */
     public function create($hopital)
     {
-        $sql = "INSERT INTO hopital
-                (nom, localisation)
-                VALUES (:nom, :localisation)";
+        $sql = "INSERT INTO Hopital
+                (nom_hopital, commune)
+                VALUES (:nom_hopital, :commune)";
 
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connexionBdd->prepare($sql);
 
         $stmt->execute([
-            'nom' => $hopital->getNom(),
-            'localisation' => $hopital->getLocalisation()
+            'nom_hopital' => $hopital->getNom(),
+            'commune' => $hopital->getCommune()
         ]);
     }
 
@@ -88,31 +88,31 @@ class HopitalRepository
      */
     public function update($hopital)
     {
-        $sql = "UPDATE hopital
-                SET nom = :nom,
-                    localisation = :localisation
-                WHERE id_hopital = :id";
+        $sql = "UPDATE Hopital
+                SET nom_hopital = :nom_hopital,
+                    commune = :commune
+                WHERE id_hopital = :id_hopital";
 
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connexionBdd->prepare($sql);
 
         $stmt->execute([
-            'id' => $hopital->getIdHopital(),
-            'nom' => $hopital->getNom(),
-            'localisation' => $hopital->getLocalisation()
+            'id_hopital' => $hopital->getIdHopital(),
+            'nom_hopital' => $hopital->getNom(),
+            'commune' => $hopital->getCommune()
         ]);
     }
 
     /**
      * Supprimer un hôpital
      *
-     * @param $id
+     * @param $id_hopital
      */
-    public function delete($id)
+    public function delete($id_hopital)
     {
-        $sql = "DELETE FROM hopital
-                WHERE id_hopital = :id";
+        $sql = "DELETE FROM Hopital
+                WHERE id_hopital = :id_hopital";
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['id' => $id]);
+        $stmt = $this->connexionBdd->prepare($sql);
+        $stmt->execute(['id_hopital' => $id_hopital]);
     }
 }

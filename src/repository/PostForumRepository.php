@@ -1,4 +1,8 @@
 <?php
+
+require_once __DIR__ . '/../bdd/Bdd.php';
+require_once __DIR__ . '/../modele/PostForum.php';
+
 class PostForumRepository
 {
     private $connexionBdd;
@@ -25,7 +29,7 @@ class PostForumRepository
         if (!$result) {
             return null;
         }
-        return new PostForum($result["id_post"], $result["titre"], $result["contenu"], $result["date_heure_creation"], $result["ref_canal"], $result["ref_utilisateur"]);
+        return new PostForum($result["id_post"], $result["ref_utilisateur"], $result["ref_canal"], $result["date_heure_creation"], $result["contenu"], $result["titre"]);
     }
 
     public function getAllPostForum(): array
@@ -36,7 +40,7 @@ class PostForumRepository
         $results = $req->fetchAll();
         $tabPostForum = [];
         foreach ($results as $result) {
-            $tabPostForum[] = new PostForum($result["id_post"], $result["titre"], $result["contenu"], $result["date_heure_creation"], $result["ref_canal"], $result["ref_utilisateur"]);
+            $tabPostForum[] = new PostForum($result["id_post"], $result["ref_utilisateur"], $result["ref_canal"], $result["date_heure_creation"], $result["contenu"], $result["titre"]);
         }
         return $tabPostForum;
     }

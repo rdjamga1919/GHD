@@ -1,4 +1,8 @@
 <?php
+
+require_once __DIR__ . '/../bdd/Bdd.php';
+require_once __DIR__ . '/../modele/DemandeContact.php';
+
 class DemandeContactRepository
 {
     private $connexionBdd;
@@ -25,7 +29,7 @@ class DemandeContactRepository
         if (!$result) {
             return null;
         }
-        return new DemandeContact($result["id_demande"], $result["nom_expediteur"], $result["email_expediteur"], $result["sujet"], $result["message"], $result["date_d_envoi"], $result["ref_utilisateur"]);
+        return new DemandeContact($result["date_d_envoi"], $result["ref_utilisateur"], $result["sujet"], $result["message"], $result["id_demande"], $result["email_expediteur"], $result["nom_expediteur"]);
     }
 
     public function getAllDemandeContact(): array
@@ -36,7 +40,7 @@ class DemandeContactRepository
         $results = $req->fetchAll();
         $tabDemandeContact = [];
         foreach ($results as $result) {
-            $tabDemandeContact[] = new DemandeContact($result["id_demande"], $result["nom_expediteur"], $result["email_expediteur"], $result["sujet"], $result["message"], $result["date_d_envoi"], $result["ref_utilisateur"]);
+            $tabDemandeContact[] = new DemandeContact($result["date_d_envoi"], $result["ref_utilisateur"], $result["sujet"], $result["message"], $result["id_demande"], $result["email_expediteur"], $result["nom_expediteur"]);
         }
         return $tabDemandeContact;
     }

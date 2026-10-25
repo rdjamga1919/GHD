@@ -1,15 +1,15 @@
 <?php
 
-require_once 'Connexion.php';
-require_once 'Etablissement.php';
+require_once __DIR__ . '/../bdd/Bdd.php';
+require_once __DIR__ . '/../modele/Etablissement.php';
 
 class EtablissementRepository
 {
-    private $pdo;
+    private $connexionBdd;
 
     public function __construct()
     {
-        $this->pdo = Connexion::getPdo();
+        $this->connexionBdd = (new Bdd())->getConnexionBdd();
     }
 
     /**
@@ -19,15 +19,15 @@ class EtablissementRepository
      */
     public function findAll()
     {
-        $sql = "SELECT * FROM etablissement";
-        $stmt = $this->pdo->query($sql);
+        $sql = "SELECT * FROM Etablissement";
+        $stmt = $this->connexionBdd->query($sql);
 
         $etablissements = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $etablissements[] = new etablissement(
                 $row['id_etablissement'],
-                $row['nom'],
+                $row['nom_etablissement'],
                 $row['adresse'],
                 $row['site_web']
             );
@@ -44,10 +44,10 @@ class EtablissementRepository
      */
     public function findById($id)
     {
-        $sql = "SELECT * FROM etablissement
+        $sql = "SELECT * FROM Etablissement
                 WHERE id_etablissement = :id";
 
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connexionBdd->prepare($sql);
         $stmt->execute(['id' => $id]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -55,7 +55,7 @@ class EtablissementRepository
         if ($row) {
             return new etablissement(
                 $row['id_etablissement'],
-                $row['nom'],
+                $row['nom_etablissement'],
                 $row['adresse'],
                 $row['site_web']
             );
@@ -71,11 +71,11 @@ class EtablissementRepository
      */
     public function create($etablissement)
     {
-        $sql = "INSERT INTO etablissement
+        $sql = "INSERT INTO Etablissement
                 (nom_etablissement, adresse, site_web)
                 VALUES (:nom, :adresse, :site_web)";
 
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connexionBdd->prepare($sql);
 
         $stmt->execute([
             'nom' => $etablissement->getNom(),
@@ -91,13 +91,13 @@ class EtablissementRepository
      */
     public function update($etablissement)
     {
-        $sql = "UPDATE etablissement
+        $sql = "UPDATE Etablissement
                 SET nom_etablissement = :nom,
                     adresse = :adresse,
                     site_web = :site_web
                 WHERE id_etablissement = :id";
 
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connexionBdd->prepare($sql);
 
         $stmt->execute([
             'id' => $etablissement->getIdEtablissement(),
@@ -114,10 +114,10 @@ class EtablissementRepository
      */
     public function delete($id)
     {
-        $sql = "DELETE FROM etablissement
+        $sql = "DELETE FROM Etablissement
                 WHERE id_etablissement = :id";
 
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connexionBdd->prepare($sql);
         $stmt->execute(['id' => $id]);
     }
 }
