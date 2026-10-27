@@ -52,6 +52,13 @@
             <button type="submit">Fermer l'offre</button>
         </form>
     <?php endif; ?>
+    <?php if ($estProprietaire): ?>
+        <p>
+            <a href="candidatures_recues.php?id=<?= (int) $offre['id_offre'] ?>">
+                Voir les candidatures reçues
+            </a>
+        </p>
+    <?php endif; ?>
 
 <?php endif; ?>
 
