@@ -54,7 +54,7 @@ class PartenaireRepository
     // Rattache le partenaire identifié par $idUtilisateur (toujours l'id de la SESSION) à une entreprise
     public function modifierPartenaire(int $idUtilisateur, int $refEntreprise): void
     {
-        $stmt = $this->pdo->prepare(
+        $stmt = $this->connexionBdd->prepare(
             'UPDATE partenaire SET ref_entreprise = :entreprise WHERE ref_utilisateur = :utilisateur'
         );
         $stmt->bindValue(':entreprise', $refEntreprise, PDO::PARAM_INT);

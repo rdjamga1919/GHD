@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . '/traitement_verif_session.php';
+session_start();
+
+require_once __DIR__ . '/../inclues/authentification.php';
 require_once __DIR__ . '/../repository/EntrepriseRepository.php';
 require_once __DIR__ . '/../repository/PartenaireRepository.php';
 

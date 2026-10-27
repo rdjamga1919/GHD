@@ -8,9 +8,9 @@ class EntrepriseRepository
 {
     private $connexionBdd;
 
-    public function __construct()
+    public function __construct(?PDO $connexionBdd = null)
     {
-        $this->connexionBdd = (new Bdd())->getConnexionBdd();
+        $this->connexionBdd = $connexionBdd ?? (new Bdd())->getConnexionBdd();
     }
 
     private function hydrate($row)
