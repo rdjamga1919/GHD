@@ -46,6 +46,9 @@ switch ($_SESSION['role']) {
         $specialites = $repo->getSpecialites($medecin->getIdMedecin());
         $hopitaux = $repo->getHopitaux($medecin->getIdMedecin());
 
+        require_once __DIR__ . '/../src/repository/EnseignerRepository.php';
+        $etablissements = (new EnseignerRepository())->getEtablissementsDuMedecin($medecin->getIdMedecin());
+
         break;
 
     case 'partenaire':
