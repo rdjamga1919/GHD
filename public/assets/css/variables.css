@@ -1,0 +1,75 @@
+/* GHD-HSP — Design tokens */
+
+:root {
+    /* Marque */
+    --primary: #126779;
+    --primary-hover: #0d5361;
+    --primary-pressed: #083d4b;
+    --secondary: #258cba;
+    --navy: #102f40;
+    --navy-raised: #1c4556;
+    --accent: #62c8ba;
+
+    /* Surfaces */
+    --background: #f5f8fa;
+    --surface: #ffffff;
+    --surface-soft: #f1f5f7;
+    --surface-teal: #e8f5f3;
+    --surface-disabled: #e8edef;
+
+    /* Texte */
+    --text: #173744;
+    --text-muted: #647b85;
+    --text-disabled: #91a0a7;
+    --text-on-navy: #ffffff;
+    --text-on-navy-muted: #bed1d9;
+
+    /* Bordures */
+    --border: #e0e8ec;
+    --border-strong: #c8d8de;
+    --border-accent: #9bd6cf;
+    --focus: #258cba;
+
+    /* Statuts */
+    --success: #23734e;
+    --success-bg: #eaf6ef;
+    --warning: #936416;
+    --warning-bg: #fff5df;
+    --danger: #b33440;
+    --danger-bg: #fff0f1;
+    --danger-hover: #922735;
+    --info: #245b91;
+    --info-bg: #edf5fd;
+
+    /* Rôles */
+    --role-etudiant-bg: #e8f5f3;
+    --role-etudiant-text: #126779;
+    --role-medecin-bg: #edf1fb;
+    --role-medecin-text: #405b91;
+    --role-partenaire-bg: #f4edf8;
+    --role-partenaire-text: #71538b;
+
+    /* Typographie */
+    --font-main: "Samsung One", "SamsungOne",
+    "Inter", Arial, Helvetica, sans-serif;
+
+    /* Espacements */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-ms: 12px;
+    --space-md: 16px;
+    --space-ml: 20px;
+    --space-lg: 24px;
+    --space-section: 30px;
+    --space-xl: 36px;
+
+    /* Formes */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-pill: 999px;
+
+    /* Effets */
+    --shadow: 0 8px 28px rgba(16, 47, 64, 0.055);
+    --transition: 0.2s ease;
+}
