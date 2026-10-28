@@ -30,9 +30,9 @@ try {
 // Statuts de la BDD (ENUM) -> libellé et classe CSS.
 // Attention : l'ENUM de la BDD contient 'bloque' ; il est affiché « Refusée » (à confirmer avec le groupe).
 $statuts = [
-        'en_attente' => ['En attente', 'badge-en-attente'],
-        'accepte'    => ['Acceptée', 'badge-acceptee'],
-        'bloque'     => ['Refusée', 'badge-refusee'],
+    'en_attente' => ['En attente', 'badge-en-attente'],
+    'accepte'    => ['Acceptée', 'badge-acceptee'],
+    'bloque'     => ['Refusée', 'badge-refusee'],
 ];
 ?>
 <!DOCTYPE html>
@@ -41,15 +41,15 @@ $statuts = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mes candidatures – GHD</title>
-    <link rel="stylesheet" href="assets/css/variables.css">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="../ressources/js/ressources/style.css">
 </head>
 <body>
 
-<main class="container">
+<main class="content">
 
-    <h1 class="page-title">Mes candidatures</h1>
+    <div class="page-header">
+        <h1>Mes candidatures</h1>
+    </div>
 
     <?php if (!empty($erreurs)): ?>
         <div class="alert alert-error">
@@ -60,8 +60,8 @@ $statuts = [
     <?php endif; ?>
 
     <div class="card">
-        <h2>Mes candidatures (<?= count($candidatures) ?>)</h2>
-        <table class="table">
+        <div class="card-header">Mes candidatures (<?= count($candidatures) ?>)</div>
+        <table>
             <thead>
             <tr>
                 <th>Offre</th>
@@ -81,15 +81,15 @@ $statuts = [
                         <td><strong><?= htmlspecialchars($c['titre_offre']) ?></strong></td>
                         <td><?= $c['nom_entreprise'] !== null ? htmlspecialchars($c['nom_entreprise']) : 'Non renseignée' ?></td>
                         <td><?= htmlspecialchars(date('d/m/Y H:i', strtotime($c['date_candidature']))) ?></td>
-                        <td><span class="tag"><?= htmlspecialchars($statut[0]) ?></span></td>
+                        <td><span class="badge <?= htmlspecialchars($statut[1]) ?>"><?= htmlspecialchars($statut[0]) ?></span></td>
                         <td>
-                            <a class="btn btn-secondary" href="offre_detail.php?id=<?= (int) $c['id_offre'] ?>">Voir l'offre</a>
+                            <a class="btn btn-ghost" href="offre_detail.php?id=<?= (int) $c['id_offre'] ?>">Voir l'offre</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="5">
+                    <td colspan="5" class="empty-msg">
                         Vous n'avez encore postulé à aucune offre.
                         <a href="offres.php">Consulter les offres</a>
                     </td>

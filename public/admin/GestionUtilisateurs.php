@@ -42,79 +42,67 @@ unset($_SESSION['message'], $_SESSION['messageType']);
 require_once __DIR__ . '/../../src/inclues/header.php';
 ?>
 
-    <link rel="stylesheet" href="../assets/css/variables.css">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/components.css">
+    <h1>Comptes en attente de validation</h1>
 
-    <main class="container">
+<?php if ($message !== ''): ?>
+    <div class="message message-<?= htmlspecialchars($messageType) ?>">
+        <?= htmlspecialchars($message) ?>
+    </div>
+<?php endif; ?>
 
-        <h1 class="page-title">Comptes en attente de validation</h1>
+<?php if ($erreurChargement): ?>
 
-        <?php if ($message !== ''): ?>
-            <div class="alert <?= $messageType === 'success' ? 'alert-success' : 'alert-error' ?>">
-                <?= htmlspecialchars($message) ?>
-            </div>
-        <?php endif; ?>
+    <p class="message message-error">La liste des comptes est momentanément indisponible. Veuillez réessayer.</p>
 
-        <?php if ($erreurChargement): ?>
+<?php elseif (empty($comptesEnAttente)): ?>
 
-            <div class="alert alert-error">La liste des comptes est momentanément indisponible. Veuillez réessayer.</div>
+    <p class="message-vide">Aucun compte en attente de validation.</p>
 
-        <?php elseif (empty($comptesEnAttente)): ?>
+<?php else: ?>
 
-            <div class="card">
-                <p>Aucun compte en attente de validation.</p>
-            </div>
+    <table class="table-admin">
+        <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Email</th>
+            <th>Rôle</th>
+            <th>Demandé le</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($comptesEnAttente as $compte): ?>
+            <tr>
+                <td><?= htmlspecialchars($compte->getNom()) ?></td>
+                <td><?= htmlspecialchars($compte->getPrenom()) ?></td>
+                <td><?= htmlspecialchars($compte->getEmail()) ?></td>
+                <td>
+                    <span class="badge">
+                        <?= htmlspecialchars($libellesRole[$compte->getRole()] ?? $compte->getRole()) ?>
+                    </span>
+                </td>
+                <td><?= htmlspecialchars(date('d/m/Y à H:i', strtotime($compte->getDateCreation()))) ?></td>
+                <td class="actions">
+                    <form method="post" action="/GHD/src/traitement/admin/traitementGestionUtilisateurs.php">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_gestion_utilisateurs']) ?>">
+                        <input type="hidden" name="id_utilisateur" value="<?= (int) $compte->getIdUtilisateur() ?>">
+                        <input type="hidden" name="action" value="valider">
+                        <button type="submit" class="btn btn-valider">Valider</button>
+                    </form>
+                    <form method="post" action="/GHD/src/traitement/admin/traitementGestionUtilisateurs.php"
+                          onsubmit="return confirm('Refuser et supprimer définitivement ce compte ?');">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_gestion_utilisateurs']) ?>">
+                        <input type="hidden" name="id_utilisateur" value="<?= (int) $compte->getIdUtilisateur() ?>">
+                        <input type="hidden" name="action" value="refuser">
+                        <button type="submit" class="btn btn-refuser">Refuser</button>
+                    </form>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
 
-        <?php else: ?>
-
-            <div class="card">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Email</th>
-                        <th>Rôle</th>
-                        <th>Demandé le</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach ($comptesEnAttente as $compte): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($compte->getNom()) ?></td>
-                            <td><?= htmlspecialchars($compte->getPrenom()) ?></td>
-                            <td><?= htmlspecialchars($compte->getEmail()) ?></td>
-                            <td>
-                                <span class="tag">
-                                    <?= htmlspecialchars($libellesRole[$compte->getRole()] ?? $compte->getRole()) ?>
-                                </span>
-                            </td>
-                            <td><?= htmlspecialchars(date('d/m/Y à H:i', strtotime($compte->getDateCreation()))) ?></td>
-                            <td>
-                                <form method="post" action="/GHD/src/traitement/admin/traitementGestionUtilisateurs.php">
-                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_gestion_utilisateurs']) ?>">
-                                    <input type="hidden" name="id_utilisateur" value="<?= (int) $compte->getIdUtilisateur() ?>">
-                                    <input type="hidden" name="action" value="valider">
-                                    <button type="submit" class="btn">Valider</button>
-                                </form>
-                                <form method="post" action="/GHD/src/traitement/admin/traitementGestionUtilisateurs.php"
-                                      onsubmit="return confirm('Refuser et supprimer définitivement ce compte ?');">
-                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_gestion_utilisateurs']) ?>">
-                                    <input type="hidden" name="id_utilisateur" value="<?= (int) $compte->getIdUtilisateur() ?>">
-                                    <input type="hidden" name="action" value="refuser">
-                                    <button type="submit" class="btn btn-secondary">Refuser</button>
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-
-        <?php endif; ?>
-
-    </main>
+<?php endif; ?>
 
 <?php require_once __DIR__ . '/../../src/inclues/footer.php'; ?>

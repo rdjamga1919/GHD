@@ -1,3 +1,4 @@
+
 <?php
 
 session_start();
@@ -54,103 +55,138 @@ foreach ($utilisateurs as $utilisateur) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Annuaire - GHD</title>
-    <link rel="stylesheet" href="assets/css/variables.css">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/components.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        h1 {
+            color: #263b58;
+        }
+
+        form {
+            display: flex;
+            gap: 10px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+
+        input, select, button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #263b58;
+            color: white;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 14px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #263b58;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f4f8;
+        }
+    </style>
 </head>
 
 <body>
 
-<main class="container">
+<h1>Annuaire GHD</h1>
 
-    <h1 class="page-title">Annuaire GHD</h1>
+<p>Retrouvez les membres du réseau hospitalo-universitaire.</p>
 
-    <p>Retrouvez les membres du réseau hospitalo-universitaire.</p>
+<form method="GET" action="annuaire.php">
 
-    <form class="card" method="GET" action="annuaire.php">
+    <input
+        type="text"
+        name="recherche"
+        placeholder="Rechercher un nom ou prénom"
+        value="<?= htmlspecialchars($recherche, ENT_QUOTES, 'UTF-8') ?>"
+    >
 
-        <div class="form-group">
-            <label for="recherche">Nom ou prénom</label>
-            <input
-                    type="text"
-                    id="recherche"
-                    name="recherche"
-                    class="form-control"
-                    placeholder="Rechercher un nom ou prénom"
-                    value="<?= htmlspecialchars($recherche, ENT_QUOTES, 'UTF-8') ?>"
-            >
-        </div>
+    <select name="role">
+        <option value="">Tous les profils</option>
 
-        <div class="form-group">
-            <label for="role">Profil</label>
-            <select id="role" name="role" class="form-control">
-                <option value="">Tous les profils</option>
+        <option value="etudiant" <?= $role === 'etudiant' ? 'selected' : '' ?>>
+            Étudiants
+        </option>
 
-                <option value="etudiant" <?= $role === 'etudiant' ? 'selected' : '' ?>>
-                    Étudiants
-                </option>
+        <option value="medecin" <?= $role === 'medecin' ? 'selected' : '' ?>>
+            Médecins
+        </option>
 
-                <option value="medecin" <?= $role === 'medecin' ? 'selected' : '' ?>>
-                    Médecins
-                </option>
+        <option value="partenaire" <?= $role === 'partenaire' ? 'selected' : '' ?>>
+            Partenaires
+        </option>
+    </select>
 
-                <option value="partenaire" <?= $role === 'partenaire' ? 'selected' : '' ?>>
-                    Partenaires
-                </option>
-            </select>
-        </div>
+    <button type="submit">Rechercher</button>
 
-        <button type="submit" class="btn">Rechercher</button>
+    <a href="annuaire.php">Réinitialiser</a>
 
-        <a class="btn btn-secondary" href="annuaire.php">Réinitialiser</a>
+</form>
 
-    </form>
+<p><?= count($resultats) ?> résultat(s)</p>
 
-    <p><?= count($resultats) ?> résultat(s)</p>
+<table>
 
-    <div class="card">
+    <thead>
+    <tr>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Rôle</th>
+    </tr>
+    </thead>
 
-        <table class="table">
+    <tbody>
 
-            <thead>
-            <tr>
-                <th>Nom</th>
-                <th>Prénom</th>
-                <th>Rôle</th>
-            </tr>
-            </thead>
+    <?php foreach ($resultats as $utilisateur): ?>
 
-            <tbody>
+        <tr>
+            <td><?= htmlspecialchars($utilisateur->getNom(), ENT_QUOTES, 'UTF-8') ?></td>
+            <td><?= htmlspecialchars($utilisateur->getPrenom(), ENT_QUOTES, 'UTF-8') ?></td>
+            <td><?= htmlspecialchars(ucfirst($utilisateur->getRole()), ENT_QUOTES, 'UTF-8') ?></td>
+        </tr>
 
-            <?php foreach ($resultats as $utilisateur): ?>
+    <?php endforeach; ?>
 
-                <tr>
-                    <td><?= htmlspecialchars($utilisateur->getNom(), ENT_QUOTES, 'UTF-8') ?></td>
-                    <td><?= htmlspecialchars($utilisateur->getPrenom(), ENT_QUOTES, 'UTF-8') ?></td>
-                    <td><span class="tag"><?= htmlspecialchars(ucfirst($utilisateur->getRole()), ENT_QUOTES, 'UTF-8') ?></span></td>
-                </tr>
+    <?php if (empty($resultats)): ?>
 
-            <?php endforeach; ?>
+        <tr>
+            <td colspan="3">Aucun utilisateur trouvé.</td>
+        </tr>
 
-            <?php if (empty($resultats)): ?>
+    <?php endif; ?>
 
-                <tr>
-                    <td colspan="3">Aucun utilisateur trouvé.</td>
-                </tr>
+    </tbody>
 
-            <?php endif; ?>
+</table>
 
-            </tbody>
-
-        </table>
-
-    </div>
-
-    <p>
-        <a class="btn btn-secondary" href="profil.php">Retour à mon profil</a>
-    </p>
-
-</main>
+<p>
+    <a href="profil.php">Retour à mon profil</a>
+</p>
 
 </body>
 </html>

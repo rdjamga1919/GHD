@@ -56,72 +56,62 @@ if (isset($_GET['id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Établissements - GHD</title>
-    <link rel="stylesheet" href="assets/css/variables.css">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/components.css">
 </head>
 
 <body>
 
-<main class="container">
+<main>
 
-    <h1 class="page-title">Établissements d'enseignement</h1>
+    <h1>Établissements d'enseignement</h1>
 
     <?php foreach ($erreurs as $erreur): ?>
-        <div class="alert alert-error">
+        <p style="color: red;">
             <?= htmlspecialchars($erreur, ENT_QUOTES, 'UTF-8') ?>
-        </div>
+        </p>
     <?php endforeach; ?>
 
     <?php if ($succes !== ''): ?>
-        <div class="alert alert-success">
+        <p style="color: green;">
             <?= htmlspecialchars($succes, ENT_QUOTES, 'UTF-8') ?>
-        </div>
+        </p>
     <?php endif; ?>
 
     <?php if ($etablissement !== null): ?>
 
-        <div class="card">
+        <h2>
+            <?= htmlspecialchars($etablissement->getNom(), ENT_QUOTES, 'UTF-8') ?>
+        </h2>
 
-            <h2>
-                <?= htmlspecialchars($etablissement->getNom(), ENT_QUOTES, 'UTF-8') ?>
-            </h2>
+        <p>
+            <strong>Adresse :</strong>
+            <?= htmlspecialchars($etablissement->getAdresse(), ENT_QUOTES, 'UTF-8') ?>
+        </p>
 
-            <p>
-                <strong>Adresse :</strong>
-                <?= htmlspecialchars($etablissement->getAdresse(), ENT_QUOTES, 'UTF-8') ?>
-            </p>
+        <p>
+            <strong>Site web :</strong>
+            <a
+                    href="<?= htmlspecialchars($etablissement->getSiteWeb(), ENT_QUOTES, 'UTF-8') ?>"
+                    target="_blank"
+                    rel="noopener noreferrer"
+            >
+                <?= htmlspecialchars($etablissement->getSiteWeb(), ENT_QUOTES, 'UTF-8') ?>
+            </a>
+        </p>
 
-            <p>
-                <strong>Site web :</strong>
-                <a
-                        href="<?= htmlspecialchars($etablissement->getSiteWeb(), ENT_QUOTES, 'UTF-8') ?>"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                >
-                    <?= htmlspecialchars($etablissement->getSiteWeb(), ENT_QUOTES, 'UTF-8') ?>
-                </a>
-            </p>
+        <a href="etablissement.php">Retour à la liste</a>
 
-            <a class="btn btn-secondary" href="etablissement.php">Retour à la liste</a>
 
-            <?php if ($peutCreer): ?>
+        <?php if ($peutCreer): ?>
 
-                <?php if (!isset($_GET['modifier'])): ?>
+            <?php if (!isset($_GET['modifier'])): ?>
 
-                    <a class="btn" href="etablissement.php?id=<?= (int) $etablissement->getIdEtablissement() ?>&modifier=1">
+                <p>
+                    <a href="etablissement.php?id=<?= (int) $etablissement->getIdEtablissement() ?>&modifier=1">
                         Modifier l'établissement
                     </a>
+                </p>
 
-                <?php endif; ?>
-
-            <?php endif; ?>
-
-        </div>
-
-        <?php if ($peutCreer && isset($_GET['modifier'])): ?>
-
-            <div class="card">
+            <?php else: ?>
 
                 <h2>Modifier l'établissement</h2>
 
@@ -135,172 +125,154 @@ if (isset($_GET['id'])) {
                     <input type="hidden" name="id_etablissement"
                            value="<?= (int) $etablissement->getIdEtablissement() ?>">
 
-                    <div class="form-group">
+                    <p>
                         <label for="nom">Nom de l'établissement</label>
-                        <input type="text" id="nom" name="nom_etablissement" class="form-control"
+                        <input type="text" id="nom" name="nom_etablissement"
                                maxlength="150" required
                                value="<?= htmlspecialchars($ancien['nom_etablissement'] ?? $etablissement->getNom(), ENT_QUOTES, 'UTF-8') ?>">
-                    </div>
+                    </p>
 
-                    <div class="form-group">
+                    <p>
                         <label for="adresse">Adresse</label>
-                        <input type="text" id="adresse" name="adresse" class="form-control"
+                        <input type="text" id="adresse" name="adresse"
                                maxlength="255" required
                                value="<?= htmlspecialchars($ancien['adresse'] ?? $etablissement->getAdresse(), ENT_QUOTES, 'UTF-8') ?>">
-                    </div>
+                    </p>
 
-                    <div class="form-group">
+                    <p>
                         <label for="site_web">Site web</label>
-                        <input type="url" id="site_web" name="site_web" class="form-control"
+                        <input type="url" id="site_web" name="site_web"
                                maxlength="255" required
                                value="<?= htmlspecialchars($ancien['site_web'] ?? $etablissement->getSiteWeb(), ENT_QUOTES, 'UTF-8') ?>">
-                    </div>
+                    </p>
 
-                    <button type="submit" class="btn">Enregistrer les modifications</button>
+                    <button type="submit">Enregistrer les modifications</button>
 
-                    <a class="btn btn-secondary" href="etablissement.php?id=<?= (int) $etablissement->getIdEtablissement() ?>">
+                    <a href="etablissement.php?id=<?= (int) $etablissement->getIdEtablissement() ?>">
                         Annuler
                     </a>
 
                 </form>
 
-            </div>
+            <?php endif; ?>
 
         <?php endif; ?>
 
+
     <?php elseif (!isset($_GET['id'])): ?>
 
-        <div class="card">
+        <h2>Rechercher un établissement</h2>
 
-            <h2>Rechercher un établissement</h2>
+        <form method="get" action="etablissement.php">
+            <label for="recherche">Nom</label>
 
-            <form method="get" action="etablissement.php">
+            <input
+                    type="text"
+                    id="recherche"
+                    name="q"
+                    value="<?= htmlspecialchars($recherche, ENT_QUOTES, 'UTF-8') ?>"
+                    placeholder="Rechercher un établissement"
+            >
 
-                <div class="form-group">
-                    <label for="recherche">Nom</label>
-                    <input
-                            type="text"
-                            id="recherche"
-                            name="q"
-                            class="form-control"
-                            value="<?= htmlspecialchars($recherche, ENT_QUOTES, 'UTF-8') ?>"
-                            placeholder="Rechercher un établissement"
-                    >
-                </div>
+            <button type="submit">Rechercher</button>
+            <a href="etablissement.php">Réinitialiser</a>
+        </form>
 
-                <button type="submit" class="btn">Rechercher</button>
-                <a class="btn btn-secondary" href="etablissement.php">Réinitialiser</a>
-            </form>
+        <h2>Liste des établissements</h2>
 
-        </div>
+        <?php if (empty($etablissements)): ?>
 
-        <div class="card">
+            <p>Aucun établissement trouvé.</p>
 
-            <h2>Liste des établissements</h2>
+        <?php else: ?>
 
-            <?php if (empty($etablissements)): ?>
+            <table border="1" cellpadding="8">
+                <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Adresse</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
 
-                <p>Aucun établissement trouvé.</p>
-
-            <?php else: ?>
-
-                <table class="table">
-                    <thead>
+                <tbody>
+                <?php foreach ($etablissements as $e): ?>
                     <tr>
-                        <th>Nom</th>
-                        <th>Adresse</th>
-                        <th>Action</th>
+                        <td>
+                            <?= htmlspecialchars($e->getNom(), ENT_QUOTES, 'UTF-8') ?>
+                        </td>
+
+                        <td>
+                            <?= htmlspecialchars($e->getAdresse(), ENT_QUOTES, 'UTF-8') ?>
+                        </td>
+
+                        <td>
+                            <a href="etablissement.php?id=<?= (int) $e->getIdEtablissement() ?>">
+                                Voir la fiche
+                            </a>
+                        </td>
                     </tr>
-                    </thead>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
 
-                    <tbody>
-                    <?php foreach ($etablissements as $e): ?>
-                        <tr>
-                            <td>
-                                <?= htmlspecialchars($e->getNom(), ENT_QUOTES, 'UTF-8') ?>
-                            </td>
-
-                            <td>
-                                <?= htmlspecialchars($e->getAdresse(), ENT_QUOTES, 'UTF-8') ?>
-                            </td>
-
-                            <td>
-                                <a class="btn btn-secondary" href="etablissement.php?id=<?= (int) $e->getIdEtablissement() ?>">
-                                    Voir la fiche
-                                </a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
-
-            <?php endif; ?>
-
-        </div>
+        <?php endif; ?>
 
     <?php endif; ?>
 
     <?php if ($peutCreer && !isset($_GET['id'])): ?>
 
-        <div class="card">
+        <h2>Ajouter un établissement</h2>
 
-            <h2>Ajouter un établissement</h2>
-
-            <form
-                    method="post"
-                    action="../src/traitement/traitement_etablissement.php"
+        <form
+                method="post"
+                action="../src/traitement/traitement_etablissement.php"
+        >
+            <input
+                    type="hidden"
+                    name="csrf"
+                    value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>"
             >
+            <p>
+                <label for="nom">Nom de l'établissement</label>
                 <input
-                        type="hidden"
-                        name="csrf"
-                        value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>"
+                        type="text"
+                        id="nom"
+                        name="nom_etablissement"
+                        maxlength="150"
+                        required
+                        value="<?= htmlspecialchars($ancien['nom_etablissement'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
                 >
+            </p>
 
-                <div class="form-group">
-                    <label for="nom">Nom de l'établissement</label>
-                    <input
-                            type="text"
-                            id="nom"
-                            name="nom_etablissement"
-                            class="form-control"
-                            maxlength="150"
-                            required
-                            value="<?= htmlspecialchars($ancien['nom_etablissement'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
-                    >
-                </div>
+            <p>
+                <label for="adresse">Adresse</label>
+                <input
+                        type="text"
+                        id="adresse"
+                        name="adresse"
+                        maxlength="255"
+                        required
+                        value="<?= htmlspecialchars($ancien['adresse'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                >
+            </p>
 
-                <div class="form-group">
-                    <label for="adresse">Adresse</label>
-                    <input
-                            type="text"
-                            id="adresse"
-                            name="adresse"
-                            class="form-control"
-                            maxlength="255"
-                            required
-                            value="<?= htmlspecialchars($ancien['adresse'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
-                    >
-                </div>
+            <p>
+                <label for="site_web">Site web</label>
+                <input
+                        type="url"
+                        id="site_web"
+                        name="site_web"
+                        maxlength="255"
+                        required
+                        placeholder="https://www.exemple.fr"
+                        value="<?= htmlspecialchars($ancien['site_web'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                >
+            </p>
 
-                <div class="form-group">
-                    <label for="site_web">Site web</label>
-                    <input
-                            type="url"
-                            id="site_web"
-                            name="site_web"
-                            class="form-control"
-                            maxlength="255"
-                            required
-                            placeholder="https://www.exemple.fr"
-                            value="<?= htmlspecialchars($ancien['site_web'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
-                    >
-                </div>
+            <button type="submit">Ajouter l'établissement</button>
 
-                <button type="submit" class="btn">Ajouter l'établissement</button>
-
-            </form>
-
-        </div>
+        </form>
 
     <?php endif; ?>
 
