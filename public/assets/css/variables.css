@@ -1,0 +1,38 @@
+
+/* GHD - Variables communes */
+
+:root {
+    /* Couleurs */
+    --primary: #153b5b;
+    --primary-hover: #24577c;
+    --secondary: #287d9d;
+
+    --background: #f3f6fa;
+    --surface: #ffffff;
+
+    --text: #243447;
+    --text-muted: #64748b;
+    --border: #dbe4ec;
+
+    --success: #198754;
+    --danger: #dc3545;
+    --warning: #b7791f;
+
+    /* Typographie */
+    --font-main: Arial, Helvetica, sans-serif;
+
+    /* Espacements */
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+
+    /* Formes */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+
+    /* Effets */
+    --shadow: 0 4px 16px rgba(21, 59, 91, 0.07);
+    --transition: 0.2s ease;
+}
