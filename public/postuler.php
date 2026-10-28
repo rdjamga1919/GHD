@@ -29,8 +29,8 @@ if ($offre['etat'] !== 'ouverte') {
 $candidatureRepo = new CandidatureRepository();
 
 $aDejaPostule = $candidatureRepo->candidatureExiste(
-    (int) $_SESSION['utilisateur_id'],
-    (int) $idOffre
+        (int) $_SESSION['utilisateur_id'],
+        (int) $idOffre
 );
 
 if (empty($_SESSION['csrf'])) {
@@ -47,77 +47,77 @@ unset($_SESSION['erreurs'], $_SESSION['valeurs']);
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Postuler - GHD</title>
+    <link rel="stylesheet" href="assets/css/variables.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/components.css">
 </head>
 <body>
 
-<h1>Postuler à une offre</h1>
+<main class="container">
 
-<h2><?= htmlspecialchars($offre['titre']) ?></h2>
+    <h1 class="page-title">Postuler à une offre</h1>
 
-<p>
-    Entreprise :
-    <?= htmlspecialchars($offre['nom_entreprise'] ?? 'Non renseignée') ?>
-</p>
+    <div class="card">
+        <h2><?= htmlspecialchars($offre['titre']) ?></h2>
+        <p>
+            Entreprise :
+            <?= htmlspecialchars($offre['nom_entreprise'] ?? 'Non renseignée') ?>
+        </p>
+    </div>
 
-<?php if ($aDejaPostule): ?>
+    <?php if ($aDejaPostule): ?>
 
-    <p>Vous avez déjà postulé à cette offre.</p>
+        <div class="card">
+            <p>Vous avez déjà postulé à cette offre.</p>
+            <a class="btn" href="mes_candidatures.php">Voir mes candidatures</a>
+        </div>
+
+    <?php else: ?>
+
+        <?php foreach ($erreurs as $erreur): ?>
+            <div class="alert alert-error"><?= htmlspecialchars($erreur) ?></div>
+        <?php endforeach; ?>
+
+        <form class="card"
+              method="POST"
+              action="../src/traitement/traitement_candidature.php">
+
+            <input type="hidden"
+                   name="id_offre"
+                   value="<?= (int) $idOffre ?>">
+
+            <input type="hidden"
+                   name="csrf"
+                   value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
+
+            <div class="form-group">
+                <label for="motivation">Message de motivation</label>
+                <textarea
+                        id="motivation"
+                        name="motivation"
+                        class="form-control"
+                        rows="8"
+                        minlength="20"
+                        maxlength="2000"
+                        required
+                ><?= htmlspecialchars($motivation) ?></textarea>
+            </div>
+
+            <button type="submit" class="btn">Envoyer ma candidature</button>
+
+        </form>
+
+    <?php endif; ?>
 
     <p>
-        <a href="mes_candidatures.php">
-            Voir mes candidatures
+        <a class="btn btn-secondary" href="offre_detail.php?id=<?= (int) $idOffre ?>">
+            Retour à l'offre
         </a>
     </p>
 
-<?php else: ?>
-
-    <?php foreach ($erreurs as $erreur): ?>
-        <p style="color: red;">
-            <?= htmlspecialchars($erreur) ?>
-        </p>
-    <?php endforeach; ?>
-
-    <form method="POST"
-          action="../src/traitement/traitement_candidature.php">
-
-        <input type="hidden"
-               name="id_offre"
-               value="<?= (int) $idOffre ?>">
-
-        <input type="hidden"
-               name="csrf"
-               value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
-
-        <label for="motivation">Message de motivation</label>
-
-        <br><br>
-
-        <textarea
-            id="motivation"
-            name="motivation"
-            rows="8"
-            cols="60"
-            minlength="20"
-            maxlength="2000"
-            required
-        ><?= htmlspecialchars($motivation) ?></textarea>
-
-        <br><br>
-
-        <button type="submit">
-            Envoyer ma candidature
-        </button>
-
-    </form>
-
-<?php endif; ?>
-
-<p>
-    <a href="offre_detail.php?id=<?= (int) $idOffre ?>">
-        Retour à l'offre
-    </a>
-</p>
+</main>
 
 </body>
 </html>

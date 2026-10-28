@@ -19,8 +19,8 @@ $idUtilisateur = (int) $_SESSION['utilisateur_id'];
 $offreRepo = new OffreRepository();
 
 $offre = $offreRepo->getOffreDuProprietaire(
-    $idOffre,
-    $idUtilisateur
+        $idOffre,
+        $idUtilisateur
 );
 
 if ($offre === null) {
@@ -31,8 +31,8 @@ if ($offre === null) {
 $candidatureRepo = new CandidatureRepository();
 
 $candidatures = $candidatureRepo->getCandidaturesParOffre(
-    $idOffre,
-    $idUtilisateur
+        $idOffre,
+        $idUtilisateur
 );
 ?>
 
@@ -40,63 +40,76 @@ $candidatures = $candidatureRepo->getCandidaturesParOffre(
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Candidatures reçues - GHD</title>
+    <link rel="stylesheet" href="assets/css/variables.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/components.css">
 </head>
 <body>
 
-<h1>Candidatures reçues</h1>
+<main class="container">
 
-<h2><?= htmlspecialchars($offre['titre']) ?></h2>
+    <h1 class="page-title">Candidatures reçues</h1>
 
-<p>
-    Nombre de candidatures : <?= count($candidatures) ?>
-</p>
-
-<?php if (empty($candidatures)): ?>
-
-    <p>Aucune candidature reçue pour cette offre.</p>
-
-<?php else: ?>
-
-    <?php foreach ($candidatures as $candidature): ?>
-
-        <hr>
-
-        <h3>
-            <?= htmlspecialchars($candidature['prenom']) ?>
-            <?= htmlspecialchars($candidature['nom']) ?>
-        </h3>
-
+    <div class="card">
+        <h2><?= htmlspecialchars($offre['titre']) ?></h2>
         <p>
-            Email :
-            <?= htmlspecialchars($candidature['email']) ?>
+            Nombre de candidatures : <?= count($candidatures) ?>
         </p>
+    </div>
 
-        <p>
-            Date :
-            <?= htmlspecialchars($candidature['date_candidature']) ?>
-        </p>
+    <?php if (empty($candidatures)): ?>
 
-        <p>
-            Statut :
-            <?= htmlspecialchars($candidature['statut']) ?>
-        </p>
+        <div class="card">
+            <p>Aucune candidature reçue pour cette offre.</p>
+        </div>
 
-        <h4>Message de motivation</h4>
+    <?php else: ?>
 
-        <p>
-            <?= nl2br(htmlspecialchars($candidature['motivation'])) ?>
-        </p>
+        <?php foreach ($candidatures as $candidature): ?>
 
-    <?php endforeach; ?>
+            <div class="card">
 
-<?php endif; ?>
+                <h2>
+                    <?= htmlspecialchars($candidature['prenom']) ?>
+                    <?= htmlspecialchars($candidature['nom']) ?>
+                </h2>
 
-<p>
-    <a href="offre_detail.php?id=<?= (int) $idOffre ?>">
-        Retour à l'offre
-    </a>
-</p>
+                <p>
+                    Email :
+                    <?= htmlspecialchars($candidature['email']) ?>
+                </p>
+
+                <p>
+                    Date :
+                    <?= htmlspecialchars($candidature['date_candidature']) ?>
+                </p>
+
+                <p>
+                    Statut :
+                    <span class="tag"><?= htmlspecialchars($candidature['statut']) ?></span>
+                </p>
+
+                <h3>Message de motivation</h3>
+
+                <p>
+                    <?= nl2br(htmlspecialchars($candidature['motivation'])) ?>
+                </p>
+
+            </div>
+
+        <?php endforeach; ?>
+
+    <?php endif; ?>
+
+    <p>
+        <a class="btn btn-secondary" href="offre_detail.php?id=<?= (int) $idOffre ?>">
+            Retour à l'offre
+        </a>
+    </p>
+
+</main>
 
 </body>
 </html>

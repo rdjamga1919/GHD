@@ -68,15 +68,15 @@ if ($entreprise === null) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entreprises – GHD</title>
-    <link rel="stylesheet" href="../ressources/js/ressources/style.css">
+    <link rel="stylesheet" href="assets/css/variables.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/components.css">
 </head>
 <body>
 
-<main class="content">
+<main class="container">
 
-    <div class="page-header">
-        <h1>Entreprises</h1>
-    </div>
+    <h1 class="page-title">Entreprises</h1>
 
     <?php if (!empty($succes)): ?>
         <div class="alert alert-success">
@@ -95,7 +95,7 @@ if ($entreprise === null) {
     <?php endif; ?>
 
     <?php if ($existante !== null): ?>
-        <div class="alert alert-info">
+        <div class="card">
             <p>
                 Entreprise déjà enregistrée :
                 <a href="entreprise.php?id=<?= (int) $existante['id'] ?>"><?= htmlspecialchars($existante['nom']) ?></a>
@@ -105,51 +105,48 @@ if ($entreprise === null) {
                     <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
                     <input type="hidden" name="action" value="selectionner">
                     <input type="hidden" name="ref_entreprise" value="<?= (int) $existante['id'] ?>">
-                    <button type="submit" class="btn btn-primary">Sélectionner cette entreprise</button>
+                    <button type="submit" class="btn">Sélectionner cette entreprise</button>
                 </form>
             <?php elseif (!$connecte): ?>
-                <p><a class="btn btn-ghost" href="inscription.php?entreprise=<?= (int) $existante['id'] ?>">Continuer mon inscription avec cette entreprise</a></p>
+                <p><a class="btn btn-secondary" href="inscription.php?entreprise=<?= (int) $existante['id'] ?>">Continuer mon inscription avec cette entreprise</a></p>
             <?php endif; ?>
         </div>
     <?php endif; ?>
 
     <?php if ($entreprise !== null): ?>
 
-        <!-- Fiche détaillée -->
         <div class="card">
-            <div class="card-header"><?= htmlspecialchars($entreprise->getNom()) ?></div>
-            <div class="card-body">
-                <p><strong>Adresse :</strong> <?= htmlspecialchars($entreprise->getAdresse()) ?></p>
-                <p>
-                    <strong>Site web :</strong>
-                    <a href="<?= htmlspecialchars($entreprise->getSiteWeb()) ?>" target="_blank" rel="noopener noreferrer">
-                        <?= htmlspecialchars($entreprise->getSiteWeb()) ?>
-                    </a>
-                </p>
+            <h2><?= htmlspecialchars($entreprise->getNom()) ?></h2>
+            <p><strong>Adresse :</strong> <?= htmlspecialchars($entreprise->getAdresse()) ?></p>
+            <p>
+                <strong>Site web :</strong>
+                <a href="<?= htmlspecialchars($entreprise->getSiteWeb()) ?>" target="_blank" rel="noopener noreferrer">
+                    <?= htmlspecialchars($entreprise->getSiteWeb()) ?>
+                </a>
+            </p>
 
-                <div class="actions">
-                    <?php if ($estPartenaire && $monEntrepriseId === $entreprise->getIdEntreprise()): ?>
-                        <span class="badge badge-actif">Votre entreprise</span>
-                    <?php elseif ($estPartenaire): ?>
-                        <form method="post" action="../src/traitement/traitement_entreprise.php">
-                            <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
-                            <input type="hidden" name="action" value="selectionner">
-                            <input type="hidden" name="ref_entreprise" value="<?= (int) $entreprise->getIdEntreprise() ?>">
-                            <input type="hidden" name="retour" value="profil">
-                            <button type="submit" class="btn btn-primary">C'est mon entreprise</button>
-                        </form>
-                    <?php elseif (!$connecte): ?>
-                        <a class="btn btn-primary" href="inscription.php?entreprise=<?= (int) $entreprise->getIdEntreprise() ?>">S'inscrire avec cette entreprise</a>
-                        <a class="btn btn-ghost" href="connexion.php">Se connecter</a>
-                    <?php endif; ?>
-                    <a class="btn btn-ghost" href="entreprise.php">← Retour à la liste</a>
-                </div>
+            <div>
+                <?php if ($estPartenaire && $monEntrepriseId === $entreprise->getIdEntreprise()): ?>
+                    <span class="tag">Votre entreprise</span>
+                <?php elseif ($estPartenaire): ?>
+                    <form method="post" action="../src/traitement/traitement_entreprise.php">
+                        <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
+                        <input type="hidden" name="action" value="selectionner">
+                        <input type="hidden" name="ref_entreprise" value="<?= (int) $entreprise->getIdEntreprise() ?>">
+                        <input type="hidden" name="retour" value="profil">
+                        <button type="submit" class="btn">C'est mon entreprise</button>
+                    </form>
+                <?php elseif (!$connecte): ?>
+                    <a class="btn" href="inscription.php?entreprise=<?= (int) $entreprise->getIdEntreprise() ?>">S'inscrire avec cette entreprise</a>
+                    <a class="btn btn-secondary" href="connexion.php">Se connecter</a>
+                <?php endif; ?>
+                <a class="btn btn-secondary" href="entreprise.php">← Retour à la liste</a>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-header">Partenaires rattachés (<?= count($partenaires) ?>)</div>
-            <table>
+            <h2>Partenaires rattachés (<?= count($partenaires) ?>)</h2>
+            <table class="table">
                 <thead>
                 <tr>
                     <th>Nom</th>
@@ -168,7 +165,7 @@ if ($entreprise === null) {
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="3" class="empty-msg">Aucun partenaire rattaché à cette entreprise.</td>
+                        <td colspan="3">Aucun partenaire rattaché à cette entreprise.</td>
                     </tr>
                 <?php endif; ?>
                 </tbody>
@@ -177,33 +174,27 @@ if ($entreprise === null) {
 
     <?php else: ?>
 
-        <!-- Recherche par nom -->
         <div class="card">
-            <div class="card-header">Rechercher une entreprise</div>
-            <div class="card-body">
-                <form method="get" action="entreprise.php">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="recherche">Nom de l'entreprise</label>
-                            <input type="text" id="recherche" name="recherche" maxlength="150"
-                                   value="<?= htmlspecialchars($recherche) ?>" placeholder="Ex : Medi">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Rechercher</button>
-                        <?php if ($recherche !== ''): ?>
-                            <a class="btn btn-ghost" href="entreprise.php">Réinitialiser</a>
-                        <?php endif; ?>
-                    </div>
-                </form>
-            </div>
+            <h2>Rechercher une entreprise</h2>
+            <form method="get" action="entreprise.php">
+                <div class="form-group">
+                    <label for="recherche">Nom de l'entreprise</label>
+                    <input type="text" id="recherche" name="recherche" class="form-control" maxlength="150"
+                           value="<?= htmlspecialchars($recherche) ?>" placeholder="Ex : Medi">
+                </div>
+                <button type="submit" class="btn">Rechercher</button>
+                <?php if ($recherche !== ''): ?>
+                    <a class="btn btn-secondary" href="entreprise.php">Réinitialiser</a>
+                <?php endif; ?>
+            </form>
         </div>
 
-        <!-- Liste -->
         <div class="card">
-            <div class="card-header">
+            <h2>
                 <?= $recherche !== '' ? 'Résultats pour « ' . htmlspecialchars($recherche) . ' »' : 'Entreprises enregistrées' ?>
                 (<?= count($entreprises) ?>)
-            </div>
-            <table>
+            </h2>
+            <table class="table">
                 <thead>
                 <tr>
                     <th>Nom</th>
@@ -224,13 +215,13 @@ if ($entreprise === null) {
                                 </a>
                             </td>
                             <td>
-                                <a class="btn btn-ghost" href="entreprise.php?id=<?= (int) $e->getIdEntreprise() ?>">Voir la fiche</a>
+                                <a class="btn btn-secondary" href="entreprise.php?id=<?= (int) $e->getIdEntreprise() ?>">Voir la fiche</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="4" class="empty-msg">
+                        <td colspan="4">
                             <?= $recherche !== ''
                                     ? 'Aucune entreprise ne correspond à « ' . htmlspecialchars($recherche) . ' ».'
                                     : 'Aucune entreprise enregistrée.' ?>
@@ -241,42 +232,37 @@ if ($entreprise === null) {
             </table>
         </div>
 
-        <!-- Création -->
         <div class="card" id="creation">
-            <div class="card-header">Ajouter une entreprise</div>
-            <div class="card-body">
-                <?php if (!$peutCreer): ?>
-                    <p class="empty-msg">Seuls les partenaires peuvent ajouter une entreprise.</p>
-                <?php else: ?>
-                    <?php if (!$connecte): ?>
-                        <p>Vous n'êtes pas connecté : créez l'entreprise puis poursuivez votre
-                            <a href="inscription.php">inscription</a>, ou <a href="connexion.php">connectez-vous</a>.</p>
-                    <?php endif; ?>
-                    <form method="post" action="../src/traitement/traitement_entreprise.php">
-                        <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
-                        <input type="hidden" name="action" value="creer">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="nom_entreprise">Nom</label>
-                                <input type="text" id="nom_entreprise" name="nom_entreprise" required maxlength="150"
-                                       value="<?= htmlspecialchars($nomSaisi) ?>">
-                            </div>
-                            <div class="form-group">
-                                <label for="adresse">Adresse</label>
-                                <input type="text" id="adresse" name="adresse" required maxlength="255"
-                                       value="<?= htmlspecialchars($adresseSaisie) ?>">
-                            </div>
-                            <div class="form-group">
-                                <label for="site_web">Site web</label>
-                                <input type="url" id="site_web" name="site_web" required maxlength="255"
-                                       placeholder="https://www.entreprise.fr"
-                                       value="<?= htmlspecialchars($siteWebSaisi) ?>">
-                            </div>
-                            <button type="submit" class="btn btn-primary">➕ Ajouter</button>
-                        </div>
-                    </form>
+            <h2>Ajouter une entreprise</h2>
+            <?php if (!$peutCreer): ?>
+                <p>Seuls les partenaires peuvent ajouter une entreprise.</p>
+            <?php else: ?>
+                <?php if (!$connecte): ?>
+                    <p>Vous n'êtes pas connecté : créez l'entreprise puis poursuivez votre
+                        <a href="inscription.php">inscription</a>, ou <a href="connexion.php">connectez-vous</a>.</p>
                 <?php endif; ?>
-            </div>
+                <form method="post" action="../src/traitement/traitement_entreprise.php">
+                    <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
+                    <input type="hidden" name="action" value="creer">
+                    <div class="form-group">
+                        <label for="nom_entreprise">Nom</label>
+                        <input type="text" id="nom_entreprise" name="nom_entreprise" class="form-control" required maxlength="150"
+                               value="<?= htmlspecialchars($nomSaisi) ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="adresse">Adresse</label>
+                        <input type="text" id="adresse" name="adresse" class="form-control" required maxlength="255"
+                               value="<?= htmlspecialchars($adresseSaisie) ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="site_web">Site web</label>
+                        <input type="url" id="site_web" name="site_web" class="form-control" required maxlength="255"
+                               placeholder="https://www.entreprise.fr"
+                               value="<?= htmlspecialchars($siteWebSaisi) ?>">
+                    </div>
+                    <button type="submit" class="btn">➕ Ajouter</button>
+                </form>
+            <?php endif; ?>
         </div>
 
     <?php endif; ?>
