@@ -1,16 +1,18 @@
 <?php
 // public/index.php
-//o
 declare(strict_types=1);
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$routes      = require __DIR__ . '/../config/routes.php';
-$user        = $_SESSION['user'] ?? null;
-$estConnecte = $user !== null;
-$estValide   = $estConnecte && !empty($user['est_valide']);
+$routes = require __DIR__ . '/../config/routes.php';
+
+// La connexion (traitement_connexion.php) pose $_SESSION['utilisateur_id'] et $_SESSION['role'].
+// Elle refuse déjà les comptes non validés : un utilisateur connecté est donc forcément validé.
+$estConnecte = isset($_SESSION['utilisateur_id']);
+$role        = $_SESSION['role'] ?? null;
+$estValide   = $estConnecte;
 
 $pageTitle = 'Accueil';
 require __DIR__ . '/../views/layouts/header.php';
@@ -37,7 +39,7 @@ require __DIR__ . '/../views/layouts/header.php';
         <?php elseif (!$estValide): ?>
             <p><strong>Votre compte est en attente de validation par un gestionnaire.</strong></p>
         <?php else: ?>
-            <p>Bonjour <?= htmlspecialchars($user['prenom'] ?? '') ?>.</p>
+            <p>Vous êtes connecté en tant que <?= htmlspecialchars((string) $role) ?>.</p>
         <?php endif; ?>
     </section>
 

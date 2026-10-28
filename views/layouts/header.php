@@ -15,7 +15,7 @@ $pageTitle = $pageTitle ?? 'GHD-HSP';
 </head>
 <body>
 <header>
-    <a href="/index.php"><strong>GHD-HSP</strong></a>
+    <a href="/GHD/public/index.php"><strong>GHD-HSP</strong></a>
     <?php require __DIR__ . '/navbar.php'; ?>
 </header>
 <main>
