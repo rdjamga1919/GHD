@@ -1,0 +1,179 @@
+/* GHD-HSP - Styles généraux et mise en page */
+
+/* Police Samsung One : propriétaire, non hébergée ici.
+   Elle s'affiche si elle est installée sur l'appareil (local) ou si tu ajoutes
+   tes fichiers sous licence dans assets/fonts/ (décommente les lignes url).
+   Sinon, le navigateur passe à Inter puis Arial. */
+
+@font-face {
+    font-family: "Samsung One";
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    src: local("Samsung One"), local("SamsungOne"), local("SamsungOne-400");
+    /* src: url("../fonts/SamsungOne-400.woff2") format("woff2"); */
+}
+
+@font-face {
+    font-family: "Samsung One";
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+    src: local("Samsung One 600"), local("SamsungOne-600"), local("Samsung One Bold"), local("SamsungOne-700");
+    /* src: url("../fonts/SamsungOne-600.woff2") format("woff2"); */
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--font-main);
+    font-size: 16px;
+    line-height: 1.5;
+    background: var(--background);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, p {
+    margin: 0;
+}
+
+h1, h2, h3 {
+    color: var(--text);
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+a {
+    color: var(--secondary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--primary);
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+/* Typographie utilitaire */
+
+.eyebrow {
+    color: var(--primary);
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: 600;
+}
+
+.page-title {
+    font-size: 38px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+}
+
+.lead {
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.caption {
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 18px;
+}
+
+/* Mise en page */
+
+.app-shell {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-section);
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: var(--space-xl);
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-section);
+    flex: 1;
+    min-width: 0;
+}
+
+.page-header {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.cluster {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-ms);
+}
+
+.stats-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+.stats-grid > * {
+    flex: 1 1 200px;
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-lg);
+}
+
+.footer-note {
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 18px;
+}
+
+@media (max-width: 960px) {
+    .app-shell {
+        flex-direction: column;
+        padding: var(--space-md);
+    }
+
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .page-title {
+        font-size: 28px;
+    }
+}
+
+/* Page à une colonne (design system, pages simples) */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-md);
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: var(--space-md);
+    }
+}

@@ -1,0 +1,76 @@
+/* GHD-HSP - Variables communes
+   Fusion de tes anciennes variables et des tokens Figma (valeurs Figma).
+   Les anciens noms (--primary, --space-md...) sont conservés. */
+
+:root {
+    /* Marque */
+    --primary: #126779;
+    --primary-hover: #083d4b;
+    --primary-pressed: #0b5262;
+    --secondary: #258cba;          /* ancien nom, = couleur de focus Figma */
+    --navy: #102f40;
+    --navy-raised: #254b5b;
+    --accent: #62c8ba;
+
+    /* Surfaces */
+    --background: #f5f7f6;
+    --surface: #ffffff;
+    --surface-soft: #eef2f3;
+    --surface-teal: #e7f3f1;
+    --surface-disabled: #e4eaec;
+
+    /* Texte */
+    --text: #102e3a;
+    --text-muted: #526b73;
+    --text-disabled: #75878e;
+    --text-on-navy: #ffffff;
+    --text-on-navy-muted: #bfd3da;
+
+    /* Bordures */
+    --border: #d7e2e4;
+    --border-strong: #bfd3da;
+    --border-accent: #9bccca;
+    --focus: #258cba;
+
+    /* Statuts */
+    --success: #236648;
+    --success-bg: #e9f5ed;
+    --warning: #825b16;
+    --warning-bg: #fbf3df;
+    --danger: #b33440;
+    --danger-bg: #fdeef0;
+    --danger-hover: #922735;
+    --info: #245b91;
+    --info-bg: #eaf2fb;
+
+    /* Rôles (la maquette utilise "student" pour les médecins) */
+    --role-etudiant-bg: var(--surface-teal);
+    --role-etudiant-text: var(--primary);
+    --role-medecin-bg: #ebf0fa;
+    --role-medecin-text: #3e598b;
+    --role-partenaire-bg: #f3edf8;
+    --role-partenaire-text: #71538b;
+
+    /* Typographie */
+    --font-main: "Samsung One", "SamsungOne", "Samsung Sharp Sans", "Inter", Arial, Helvetica, sans-serif;
+
+    /* Espacements */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-ms: 12px;
+    --space-md: 16px;
+    --space-ml: 20px;
+    --space-lg: 24px;
+    --space-section: 28px;
+    --space-xl: 32px;
+
+    /* Formes */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 16px;
+    --radius-pill: 999px;
+
+    /* Effets */
+    --shadow: 0 4px 16px rgba(16, 47, 64, 0.07);
+    --transition: 0.2s ease;
+}
