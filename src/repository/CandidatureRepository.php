@@ -80,4 +80,67 @@ class CandidatureRepository
         $req->bindValue(':idCandidature', $idCandidature, PDO::PARAM_INT);
         $req->execute();
     }
+    public function getCandidaturesParOffre(int $idOffre, int $idUtilisateur): array
+    {
+        $sql = "SELECT
+                c.id_candidature,
+                c.date_candidature,
+                c.motivation,
+                c.statut,
+                u.nom,
+                u.prenom,
+                u.email,
+                o.titre AS titre_offre
+            FROM Candidature c
+            JOIN Offre o ON o.id_offre = c.ref_offre
+            JOIN Utilisateur u ON u.id_utilisateur = c.ref_utilisateur
+            WHERE c.ref_offre = :id_offre
+              AND o.ref_utilisateur = :id_utilisateur
+            ORDER BY c.date_candidature DESC";
+
+        $req = $this->connexionBdd->prepare($sql);
+
+        $req->execute([
+            'id_offre' => $idOffre,
+            'id_utilisateur' => $idUtilisateur
+        ]);
+
+        return $req->fetchAll(PDO::FETCH_ASSOC);
+    }
+    /**
+     * Récupère toutes les candidatures d'un étudiant
+     * avec les informations de l'offre et de l'entreprise.
+     */
+    public function findByEtudiant(int $idUtilisateur): array
+    {
+        $sql = "SELECT
+                c.id_candidature,
+                c.date_candidature,
+                c.statut,
+                o.id_offre,
+                o.titre AS titre_offre,
+                e.id_entreprise,
+                e.nom_entreprise
+            FROM Candidature c
+            JOIN Offre o ON o.id_offre = c.ref_offre
+            LEFT JOIN Partenaire p
+                ON p.ref_utilisateur = o.ref_utilisateur
+            LEFT JOIN Entreprise e
+                ON e.id_entreprise = p.ref_entreprise
+            WHERE c.ref_utilisateur = :idUtilisateur
+            ORDER BY c.date_candidature DESC,
+                     c.id_candidature DESC";
+
+        $req = $this->connexionBdd->prepare($sql);
+
+        $req->bindValue(
+            ':idUtilisateur',
+            $idUtilisateur,
+            PDO::PARAM_INT
+        );
+
+        $req->execute();
+
+        return $req->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

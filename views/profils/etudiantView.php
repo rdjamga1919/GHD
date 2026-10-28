@@ -28,3 +28,6 @@
 <p>
     <a href="modifier_profil.php">Modifier mon profil</a>
 </p>
+<p>
+    <a href="mes_candidatures.php">Voir mes candidatures</a>
+</p>
