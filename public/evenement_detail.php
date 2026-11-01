@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 
 session_start();
@@ -39,3 +40,5 @@ if ($evenement !== null) {
 }
 
 require_once __DIR__ . '/../views/evenements/detail.php';
+=======
+>>>>>>> 4678a04 (CRUD evenements : creer, modifier, supprimer, detail)
