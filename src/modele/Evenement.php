@@ -1,166 +1,55 @@
 <?php
+
+/**
+ * Modèle d'un événement (table Evenement).
+ * Ordre du constructeur identique à celui utilisé par EvenementRepository.
+ */
 class Evenement
 {
-    private $id_evenement;
-    private $titre;
-    private $description;
-    private $type_evenement;
-    private $adresse_lieu;
-    private $element_requis;
-    private $nombre_place;
-    private $date_heure_evenement;
+    private ?int $idEvenement;
+    private string $dateHeureEvenement; // 'Y-m-d H:i:s'
+    private ?string $elementRequis;
+    private int $nombrePlace;
+    private string $typeEvenement;
+    private string $adresseLieu;
+    private string $description;
+    private string $titre;
 
-    /**
-     * @param $id_evenement
-     * @param $date_heure_evenement
-     * @param $element_requis
-     * @param $nombre_place
-     * @param $type_evenement
-     * @param $adresse_lieu
-     * @param $description
-     * @param $titre
-     */
-    public function __construct($id_evenement, $date_heure_evenement, $element_requis, $nombre_place, $type_evenement, $adresse_lieu, $description, $titre)
-    {
-        $this->id_evenement = $id_evenement;
-        $this->date_heure_evenement = $date_heure_evenement;
-        $this->element_requis = $element_requis;
-        $this->nombre_place = $nombre_place;
-        $this->type_evenement = $type_evenement;
-        $this->adresse_lieu = $adresse_lieu;
-        $this->description = $description;
-        $this->titre = $titre;
+    public function __construct(
+        ?int $idEvenement,
+        string $dateHeureEvenement,
+        ?string $elementRequis,
+        int $nombrePlace,
+        string $typeEvenement,
+        string $adresseLieu,
+        string $description,
+        string $titre
+    ) {
+        $this->idEvenement        = $idEvenement;
+        $this->dateHeureEvenement = $dateHeureEvenement;
+        $this->elementRequis      = $elementRequis;
+        $this->nombrePlace        = $nombrePlace;
+        $this->typeEvenement      = $typeEvenement;
+        $this->adresseLieu        = $adresseLieu;
+        $this->description        = $description;
+        $this->titre              = $titre;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getIdEvenement()
-    {
-        return $this->id_evenement;
-    }
+    public function getIdEvenement(): ?int { return $this->idEvenement; }
+    public function getDateHeureEvenement(): string { return $this->dateHeureEvenement; }
+    public function getElementRequis(): ?string { return $this->elementRequis; }
+    public function getNombrePlace(): int { return $this->nombrePlace; }
+    public function getTypeEvenement(): string { return $this->typeEvenement; }
+    public function getAdresseLieu(): string { return $this->adresseLieu; }
+    public function getDescription(): string { return $this->description; }
+    public function getTitre(): string { return $this->titre; }
 
-    /**
-     * @param mixed $id_evenement
-     */
-    public function setIdEvenement($id_evenement): void
-    {
-        $this->id_evenement = $id_evenement;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTitre()
-    {
-        return $this->titre;
-    }
-
-    /**
-     * @param mixed $titre
-     */
-    public function setTitre($titre): void
-    {
-        $this->titre = $titre;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param mixed $description
-     */
-    public function setDescription($description): void
-    {
-        $this->description = $description;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTypeEvenement()
-    {
-        return $this->type_evenement;
-    }
-
-    /**
-     * @param mixed $type_evenement
-     */
-    public function setTypeEvenement($type_evenement): void
-    {
-        $this->type_evenement = $type_evenement;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAdresseLieu()
-    {
-        return $this->adresse_lieu;
-    }
-
-    /**
-     * @param mixed $adresse_lieu
-     */
-    public function setAdresseLieu($adresse_lieu): void
-    {
-        $this->adresse_lieu = $adresse_lieu;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getElementRequis()
-    {
-        return $this->element_requis;
-    }
-
-    /**
-     * @param mixed $element_requis
-     */
-    public function setElementRequis($element_requis): void
-    {
-        $this->element_requis = $element_requis;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getNombrePlace()
-    {
-        return $this->nombre_place;
-    }
-
-    /**
-     * @param mixed $nombre_place
-     */
-    public function setNombrePlace($nombre_place): void
-    {
-        $this->nombre_place = $nombre_place;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDateHeureEvenement()
-    {
-        return $this->date_heure_evenement;
-    }
-
-    /**
-     * @param mixed $date_heure_evenement
-     */
-    public function setDateHeureEvenement($date_heure_evenement): void
-    {
-        $this->date_heure_evenement = $date_heure_evenement;
-    }
-
-
-
-
+    public function setIdEvenement(?int $v): void { $this->idEvenement = $v; }
+    public function setDateHeureEvenement(string $v): void { $this->dateHeureEvenement = $v; }
+    public function setElementRequis(?string $v): void { $this->elementRequis = $v; }
+    public function setNombrePlace(int $v): void { $this->nombrePlace = $v; }
+    public function setTypeEvenement(string $v): void { $this->typeEvenement = $v; }
+    public function setAdresseLieu(string $v): void { $this->adresseLieu = $v; }
+    public function setDescription(string $v): void { $this->description = $v; }
+    public function setTitre(string $v): void { $this->titre = $v; }
 }
