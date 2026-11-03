@@ -194,6 +194,14 @@ unset($_SESSION['erreur_connexion']);
             <button type="submit" class="btn">Se connecter</button>
         </form>
     </div>
+
+    <!-- Lien vers l'inscription -->
+    <div style="text-align: center; margin-top: 20px;">
+        <p style="font-size: 14px; color: var(--text-muted); margin: 0;">
+            Vous n'avez pas encore de compte ?
+            <a href="inscription.php" style="color: var(--primary); font-weight: 600; text-decoration: underline;">Inscrivez-vous</a>
+        </p>
+    </div>
 </div>
 
 </body>
