@@ -1,40 +1,81 @@
 <?php
-session_start();
+// Vue du formulaire d'offre (création / modification) - GHD-HSP
+$val = fn(string $k) => htmlspecialchars((string) ($old[$k] ?? $offre[$k] ?? ''));
+$typeActuel = (string) ($old['type_d_offre'] ?? $offre['type_d_offre'] ?? '');
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($titrePage ?? 'Gestion d\'une offre') ?> – GHD-HSP</title>
+    <link rel="stylesheet" href="variables.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="components.css">
+</head>
+<body>
 
-require_once __DIR__ . '/../src/inclues/authentification.php';
-require_once __DIR__ . '/../src/repository/OffreRepository.php';
+<div class="container" style="max-width: 700px;">
+    <div class="page-header">
+        <h2 class="page-title"><?= htmlspecialchars($titrePage ?? 'Gestion d\'une offre') ?></h2>
+    </div>
 
-// Vérification du rôle partenaire requis
-requireRole('partenaire');
+    <?php if (!empty($flash)): ?>
+        <div class="alert alert-<?= $flash[0] === 'succes' ? 'success' : 'error' ?>">
+            <div class="alert-body">
+                <span class="alert-text"><?= htmlspecialchars($flash[1]) ?></span>
+            </div>
+        </div>
+    <?php endif; ?>
 
-// Génération du jeton CSRF s'il n'existe pas
-if (empty($_SESSION['csrf'])) {
-    $_SESSION['csrf'] = bin2hex(random_bytes(32));
-}
+    <div class="card">
+        <form method="post" action="../src/traitement/traitement_offre.php" style="display: flex; flex-direction: column; gap: var(--space-md);">
+            <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
+            <input type="hidden" name="action" value="<?= htmlspecialchars($action) ?>">
+            <?php if ($offre !== null): ?>
+                <input type="hidden" name="id_offre" value="<?= (int) $offre['id_offre'] ?>">
+            <?php endif; ?>
 
-// Récupération et validation de l'ID de l'offre
-$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-$offre = null;
+            <div class="form-group">
+                <label for="titre">Titre *</label>
+                <input type="text" id="titre" name="titre" class="form-control" maxlength="150" required value="<?= $val('titre') ?>" placeholder="Ex: Stage Développeur Web Fullstack">
+            </div>
 
-if ($id !== false && $id !== null && $id > 0) {
-    $offre = (new OffreRepository())->getOffreDuProprietaire($id, (int) $_SESSION['utilisateur_id']);
-}
+            <div class="form-group">
+                <label for="type_d_offre">Type d'offre *</label>
+                <select id="type_d_offre" name="type_d_offre" class="form-control" required>
+                    <option value="">-- Choisir --</option>
+                    <?php foreach (['stage' => 'Stage', 'alternance' => 'Alternance', 'cdd' => 'CDD', 'cdi' => 'CDI'] as $v => $libelle): ?>
+                        <option value="<?= $v ?>"<?= $typeActuel === $v ? ' selected' : '' ?>><?= $libelle ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-// Vérification si l'offre existe, appartient bien au partenaire et est ouverte
-if ($offre === null || $offre['etat'] !== 'ouverte') {
-    $_SESSION['flash'] = ['erreur', "Offre introuvable, fermée ou qui ne vous appartient pas."];
-    header('Location: offres.php');
-    exit;
-}
+            <div class="form-group">
+                <label for="description">Description *</label>
+                <textarea id="description" name="description" class="form-control" rows="5" required placeholder="Décrivez le contexte de l'offre..."><?= $val('description') ?></textarea>
+            </div>
 
-// Récupération des messages flash et anciennes données de formulaire
-$flash = $_SESSION['flash'] ?? null;
-$old = $_SESSION['old'] ?? [];
-unset($_SESSION['flash'], $_SESSION['old']);
+            <div class="form-group">
+                <label for="missions">Missions *</label>
+                <textarea id="missions" name="missions" class="form-control" rows="5" required placeholder="Détaillez les missions confiées..."><?= $val('missions') ?></textarea>
+            </div>
 
-// Paramètres de la vue du formulaire
-$action = 'modifier';
-$titrePage = "Modifier l'offre - GHD-HSP";
+            <div class="form-group">
+                <label for="salaire">Rémunération (€, facultatif)</label>
+                <input type="text" id="salaire" name="salaire" class="form-control" value="<?= $val('salaire') ?>" placeholder="Ex: 1200">
+            </div>
 
-// Inclusion de la vue du formulaire
-require_once __DIR__ . '/../views/offres/formulaire.php';
+            <button type="submit" class="btn btn-block" style="margin-top: 8px;">
+                <?= $action === 'creer' ? "Publier l'offre" : 'Enregistrer' ?>
+            </button>
+        </form>
+    </div>
+
+    <div>
+        <a href="offres.php" class="btn btn-secondary">← Retour aux offres</a>
+    </div>
+</div>
+
+</body>
+</html>

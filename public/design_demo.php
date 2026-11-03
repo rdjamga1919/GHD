@@ -8,12 +8,7 @@
     <meta name="theme-color" content="#102f40">
     <meta name="description" content="Bibliothèque de composants et identité visuelle GHD-HSP.">
 
-    <title>Design System — GHD-HSP</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <title>Design System – GHD-HSP</title>
 
     <link rel="stylesheet" href="assets/css/variables.css">
     <link rel="stylesheet" href="assets/css/style.css">
@@ -40,7 +35,7 @@
 
     <!-- Boutons -->
     <section class="card fade-in">
-        <h2 class="card-title">01. Boutons et actions</h2>
+        <h2 class="card-title">Boutons et actions</h2>
         <p class="caption">
             Des actions claires, une hiérarchie visible et des états cohérents.
         </p>
@@ -272,8 +267,7 @@
             <p class="sidebar-label">Espace gestionnaire</p>
 
             <nav class="nav" aria-label="Exemple de navigation">
-                <a class="nav-link is-active" href="#"
-                   aria-current="page">Tableau de bord</a>
+                <a class="nav-link is-active" href="#" aria-current="page">Tableau de bord</a>
                 <a class="nav-link" href="#">Utilisateurs</a>
                 <a class="nav-link" href="#">Contenus</a>
             </nav>
@@ -297,8 +291,7 @@
             <span>Cette semaine</span>
         </div>
 
-        <div class="chart" role="img"
-             aria-label="Exemple : 9, 14, 28 et 18 validations">
+        <div class="chart" role="img" aria-label="Exemple : 9, 14, 28 et 18 validations">
             <div class="chart-col">
                 <span class="chart-value">9</span>
                 <div class="bar" style="--h:45px"></div>
