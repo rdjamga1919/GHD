@@ -1,11 +1,12 @@
 <?php
-
 session_start();
 
 require_once __DIR__ . '/../src/inclues/authentification.php';
 
+// Vérification que l'utilisateur est connecté
 requireLogin();
 
+// Routage en fonction du rôle de l'utilisateur
 switch ($_SESSION['role']) {
 
     case 'medecin':
