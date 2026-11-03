@@ -1,69 +1,57 @@
 <?php
+
 session_start();
+
 require_once __DIR__ . '/../src/inclues/authentification.php';
-require_once __DIR__ . '/../src/repository/EntrepriseRepository.php';
-require_once __DIR__ . '/../src/repository/PartenaireRepository.php';
+require_once __DIR__ . '/../src/repository/EtablissementRepository.php';
+
+$repo = new EtablissementRepository();
 
 if (empty($_SESSION['csrf'])) {
     $_SESSION['csrf'] = bin2hex(random_bytes(32));
 }
 
-// La consultation est ouverte à tous (visiteurs compris).
-// Création : visiteurs (futurs partenaires), partenaires et gestionnaires. Sélection : partenaires.
-$connecte = isset($_SESSION['utilisateur_id']);
-$role = $_SESSION['role'] ?? null;
-$estPartenaire = $connecte && $role === 'partenaire';
-$peutCreer = !$connecte || in_array($role, ['partenaire', 'gestionnaire'], true);
+$peutCreer = isAdmin();
 
-$entrepriseRepository = new EntrepriseRepository();
-$partenaireRepository = new PartenaireRepository();
+$erreurs = $_SESSION['erreurs_etablissement'] ?? [];
+$succes = $_SESSION['succes_etablissement'] ?? '';
+$ancien = $_SESSION['ancien_etablissement'] ?? [];
 
-$erreurs = $_SESSION['erreurs'] ?? [];
-$succes = $_SESSION['succes'] ?? [];
-$valeurs = $_SESSION['valeurs'] ?? [];
-$existante = $_SESSION['entreprise_existante'] ?? null;
-unset($_SESSION['erreurs'], $_SESSION['succes'], $_SESSION['valeurs'], $_SESSION['entreprise_existante']);
+unset(
+        $_SESSION['erreurs_etablissement'],
+        $_SESSION['succes_etablissement'],
+        $_SESSION['ancien_etablissement']
+);
 
-$nomSaisi = $valeurs['nom_entreprise'] ?? '';
-$adresseSaisie = $valeurs['adresse'] ?? '';
-$siteWebSaisi = $valeurs['site_web'] ?? '';
+// Liste ou fiche détaillée
+$recherche = is_string($_GET['q'] ?? null)
+        ? trim($_GET['q'])
+        : '';
+$etablissement = null;
+$etablissements = [];
 
-// Entreprise actuelle du partenaire connecté (pour afficher « Votre entreprise »)
-$monEntrepriseId = null;
-if ($estPartenaire) {
-    $monPartenaire = $partenaireRepository->findById((int) $_SESSION['utilisateur_id']);
-    if ($monPartenaire !== null) {
-        $monEntrepriseId = $monPartenaire->getRefEntreprise();
-    }
-}
-
-$recherche = trim($_GET['recherche'] ?? '');
-$entreprise = null;
-$partenaires = [];
-
-// Fiche détaillée : entreprise.php?id=...
 if (isset($_GET['id'])) {
-    $idEntreprise = filter_var($_GET['id'], FILTER_VALIDATE_INT);
-    if ($idEntreprise !== false && $idEntreprise > 0) {
-        $entreprise = $entrepriseRepository->getEntreprise($idEntreprise);
+    $id = filter_var($_GET['id'], FILTER_VALIDATE_INT);
+
+    if ($id !== false && $id > 0) {
+        $etablissement = $repo->findById($id);
     }
-    if ($entreprise === null) {
-        $erreurs[] = "Entreprise introuvable.";
-    } else {
-        $partenaires = $partenaireRepository->getPartenairesParEntreprise($entreprise->getIdEntreprise());
+
+    if ($etablissement === null) {
+        http_response_code(404);
+        $erreurs[] = "Établissement introuvable.";
     }
+} else {
+    $etablissements = ($recherche !== '')
+            ? $repo->rechercherParNom($recherche)
+            : $repo->findAll();
 }
 
-// Liste (avec recherche par nom)
-$entreprises = [];
-if ($entreprise === null) {
-    $entreprises = ($recherche !== '')
-            ? $entrepriseRepository->rechercherEntreprises($recherche)
-            : $entrepriseRepository->getAllEntreprises();
-}
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -72,6 +60,7 @@ if ($entreprise === null) {
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="components.css">
 </head>
+
 <body>
 
 <main class="container" style="max-width: 1000px;">
@@ -121,7 +110,23 @@ if ($entreprise === null) {
         </div>
     <?php endif; ?>
 
-    <?php if ($entreprise !== null): ?>
+        <p>
+            <strong>Site web :</strong>
+            <a
+                    href="<?= htmlspecialchars($etablissement->getSiteWeb(), ENT_QUOTES, 'UTF-8') ?>"
+                    target="_blank"
+                    rel="noopener noreferrer"
+            >
+                <?= htmlspecialchars($etablissement->getSiteWeb(), ENT_QUOTES, 'UTF-8') ?>
+            </a>
+        </p>
+
+        <a href="etablissement.php">Retour à la liste</a>
+
+
+        <?php if ($peutCreer): ?>
+
+            <?php if (!isset($_GET['modifier'])): ?>
 
         <!-- Fiche détaillée -->
         <div class="card">

@@ -84,4 +84,53 @@ class EvenementRepository
         $req->bindValue(':idEvenement', $idEvenement, PDO::PARAM_INT);
         $req->execute();
     }
+
+    public function getEvenementsAvecDetails(): array
+    {
+        $sql = "SELECT e.id_evenement, e.titre, e.description, e.type_evenement,
+                       e.adresse_lieu, e.nombre_place, e.date_heure_evenement,
+                       (SELECT COUNT(*) FROM s_inscrire si
+                         WHERE si.ref_evenement = e.id_evenement) AS nb_inscrits,
+                       GROUP_CONCAT(DISTINCT CONCAT(u.prenom, ' ', u.nom) SEPARATOR ', ') AS organisateurs
+                FROM evenement e
+                LEFT JOIN organiser o ON o.ref_evenement = e.id_evenement
+                LEFT JOIN utilisateur u ON u.id_utilisateur = o.ref_utilisateur
+                GROUP BY e.id_evenement
+                ORDER BY e.date_heure_evenement ASC";
+        return $this->connexionBdd->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Détail d'un événement (null si inexistant) avec le nombre d'inscrits.
+     */
+    public function getEvenementDetail(int $idEvenement): ?array
+    {
+        $sql = "SELECT e.*,
+                       (SELECT COUNT(*) FROM s_inscrire si
+                         WHERE si.ref_evenement = e.id_evenement) AS nb_inscrits
+                FROM evenement e
+                WHERE e.id_evenement = :idEvenement";
+        $req = $this->connexionBdd->prepare($sql);
+        $req->bindValue(':idEvenement', $idEvenement, PDO::PARAM_INT);
+        $req->execute();
+        $result = $req->fetch(PDO::FETCH_ASSOC);
+        return $result ?: null;
+    }
+
+    /**
+     * Organisateurs d'un événement (tableau vide si aucun).
+     */
+    public function getOrganisateurs(int $idEvenement): array
+    {
+        $sql = "SELECT u.id_utilisateur, u.nom, u.prenom, u.role
+                FROM organiser o
+                INNER JOIN utilisateur u ON u.id_utilisateur = o.ref_utilisateur
+                WHERE o.ref_evenement = :idEvenement
+                ORDER BY u.nom, u.prenom";
+        $req = $this->connexionBdd->prepare($sql);
+        $req->bindValue(':idEvenement', $idEvenement, PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 }
