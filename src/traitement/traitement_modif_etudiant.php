@@ -13,7 +13,7 @@ $etudiant = $repo->findById((int) $_SESSION['utilisateur_id']);
 
 if ($etudiant === null) {
     http_response_code(404);
-    exit("Profil étudiant introuvable.");
+        exit("Profil étudiant introuvable.");
 }
 
 // Récupérer tous les établissements

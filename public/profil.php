@@ -37,7 +37,7 @@ switch ($_SESSION['role']) {
         // Récupérer l'établissement de l'étudiant
         $repoEtablissement = new EtablissementRepository();
         $etablissement = $repoEtablissement->findById(
-                $etudiant->getRefEtablissement()
+            $etudiant->getRefEtablissement()
         );
         break;
 
@@ -66,7 +66,7 @@ switch ($_SESSION['role']) {
         // Récupérer le partenaire connecté
         $repo = new PartenaireRepository();
         $partenaire = $repo->findById(
-                (int) $_SESSION['utilisateur_id']
+            (int) $_SESSION['utilisateur_id']
         );
 
         if ($partenaire === null) {
@@ -77,7 +77,7 @@ switch ($_SESSION['role']) {
         // Récupérer son entreprise
         $repoEntreprise = new EntrepriseRepository();
         $entreprise = $repoEntreprise->getEntreprise(
-                $partenaire->getRefEntreprise()
+            $partenaire->getRefEntreprise()
         );
         break;
 
