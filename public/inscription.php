@@ -70,7 +70,7 @@ try {
             --shadow: 0 10px 25px -5px rgba(16, 47, 64, 0.1);
         }
 
-        * {
+        *, *::before, *::after {
             box-sizing: border-box;
         }
 
@@ -78,6 +78,7 @@ try {
             margin: 0;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             font-family: system-ui, -apple-system, sans-serif;
@@ -372,6 +373,14 @@ try {
 
 </main>
 
+<!-- Lien vers la connexion -->
+<div style="text-align: center; margin-top: 20px;">
+    <p style="font-size: 14px; color: var(--text-muted); margin: 0;">
+        Vous avez déjà un compte ?
+        <a href="connexion.php" style="color: var(--primary); font-weight: 600; text-decoration: underline;">Connectez-vous</a>
+    </p>
+</div>
+
 <script>
     const selectionRole = document.getElementById('role');
     function afficherChampsRole() {
@@ -385,7 +394,6 @@ try {
         });
     }
     selectionRole.addEventListener('change', afficherChampsRole);
-    afficherChsmpsRole = afficherChampsRole(); // safety execution
     afficherChampsRole();
 </script>
 
