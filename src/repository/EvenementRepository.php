@@ -19,7 +19,7 @@ class EvenementRepository
         return $req->fetchColumn();
     }
 
-    public function getEvenement($idEvenement)
+    public function getEvenement(int $idEvenement)
     {
         $sql = "SELECT * FROM Evenement WHERE id_evenement = :idEvenement";
         $req = $this->connexionBdd->prepare($sql);
@@ -95,7 +95,7 @@ class EvenementRepository
                 FROM evenement e
                 LEFT JOIN organiser o ON o.ref_evenement = e.id_evenement
                 LEFT JOIN utilisateur u ON u.id_utilisateur = o.ref_utilisateur
-                GROUP BY e.id_evenement
+                GROUP BY e.id_evenement, e.date_heure_evenement
                 ORDER BY e.date_heure_evenement ASC";
         return $this->connexionBdd->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
