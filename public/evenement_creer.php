@@ -12,7 +12,5 @@ if (!hasRole('medecin') && !hasRole('partenaire')) {
     http_response_code(403);
     exit('Accès refusé.');
 }
-
 require_once __DIR__ . '/../src/traitement/traitement_creation_evenement.php';
 require_once __DIR__ . '/../views/evenements/evenement_creation_view.php';
-
