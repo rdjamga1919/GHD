@@ -60,6 +60,74 @@ class EvenementRepository
         $req->execute();
     }
 
+    /**
+     * Crée un événement et associe son créateur
+     * comme organisateur.
+     *
+     * Les deux insertions sont effectuées dans
+     * une seule transaction.
+     *
+     * @return int Identifiant de l'événement créé
+     */
+    public function ajouterEvenementAvecOrganisateur(Evenement $evenement, int $idUtilisateur): int
+    {
+        if ($idUtilisateur <= 0) {
+            throw new InvalidArgumentException(
+                'Identifiant utilisateur invalide.'
+            );
+        }
+
+        $this->connexionBdd->beginTransaction();
+
+        try {
+            // 1. Enregistrer l'événement
+            // On réutilise ta méthode existante.
+            $this->ajouterEvenement($evenement);
+
+            // 2. Récupérer son ID généré par MySQL
+            $idEvenement = (int) $this->connexionBdd->lastInsertId();
+
+            if ($idEvenement <= 0) {
+                throw new RuntimeException(
+                    "Impossible de récupérer l'identifiant de l'événement."
+                );
+            }
+
+            // 3. Associer l'utilisateur à l'événement
+            $sql = "INSERT INTO organiser
+                    (ref_evenement, ref_utilisateur)
+                VALUES
+                    (:idEvenement, :idUtilisateur)";
+
+            $req = $this->connexionBdd->prepare($sql);
+            $req->bindValue(
+                ':idEvenement',
+                $idEvenement,
+                PDO::PARAM_INT
+            );
+            $req->bindValue(
+                ':idUtilisateur',
+                $idUtilisateur,
+                PDO::PARAM_INT
+            );
+            $req->execute();
+
+            // 4. Valider les deux insertions
+            $this->connexionBdd->commit();
+
+            return $idEvenement;
+
+        } catch (Throwable $e) {
+            // Si une insertion échoue, annuler l'ensemble.
+            if ($this->connexionBdd->inTransaction()) {
+                $this->connexionBdd->rollBack();
+            }
+
+            throw $e;
+        }
+    }
+
+
     public function modifierEvenement(Evenement $evenement): void
     {
         $sql = "UPDATE Evenement
