@@ -32,6 +32,7 @@ $repo = new OffreRepository();
 $action = $_POST['action'] ?? '';
 
 /** Valide le formulaire : retourne [données, erreurs] */
+//mettre cette fonction dans le repo de offre
 function validerOffre(array $post): array
 {
     $types = ['stage', 'alternance', 'cdd', 'cdi'];

@@ -159,8 +159,4 @@ class Evenement
     {
         $this->date_heure_evenement = $date_heure_evenement;
     }
-
-
-
-
 }
