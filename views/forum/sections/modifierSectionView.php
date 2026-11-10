@@ -8,38 +8,32 @@ $optionsAcces = [
 $erreurSuppression = $erreurSuppression ?? null;
 ?>
 
-<!doctype html>
-<html lang="fr">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Modifier une section</title>
-</head>
-<body>
-<main>
-    <h1>
+<section class="container forum-page forum-page--form">
+
+    <h1 class="page-title">
         Modifier la section :
         <?= echapper($section->getNomCanal()) ?>
     </h1>
 
     <?php if (isset($erreurs['general'])): ?>
-        <p role="alert">
+        <p class="alert alert-error" role="alert">
             <?= echapper($erreurs['general']) ?>
         </p>
     <?php endif; ?>
 
-    <form method="post" action="<?= echapper(URL_MODIFIER_SECTION) ?>">
+    <form class="card forum-form" method="post" action="<?= echapper(URL_MODIFIER_SECTION) ?>">
         <?= champCsrf() ?>
 
         <input
-                type="hidden"
+                    type="hidden"
                 name="id_canal"
                 value="<?= (int) $section->getIdCanal() ?>"
         >
 
-        <p>
+        <div class="form-group">
             <label for="nom">Nom *</label>
             <input
+                    class="form-control"
                     id="nom"
                     name="nom"
                     type="text"
@@ -47,34 +41,35 @@ $erreurSuppression = $erreurSuppression ?? null;
                     required
                     value="<?= echapper($valeurs['nom'] ?? '') ?>"
             >
-        </p>
+        </div>
 
         <?php if (isset($erreurs['nom'])): ?>
-            <p role="alert">
+            <p class="alert alert-error" role="alert">
                 <?= echapper($erreurs['nom']) ?>
             </p>
         <?php endif; ?>
 
-        <p>
+        <div class="form-group">
             <label for="description">Description (facultative)</label>
             <textarea
+                    class="form-control"
                     id="description"
                     name="description"
                     rows="5"
                     maxlength="<?= SECTION_DESCRIPTION_MAX ?>"
             ><?= echapper($valeurs['description'] ?? '') ?></textarea>
-        </p>
+        </div>
 
         <?php if (isset($erreurs['description'])): ?>
-            <p role="alert">
+            <p class="alert alert-error" role="alert">
                 <?= echapper($erreurs['description']) ?>
             </p>
         <?php endif; ?>
 
-        <p>
+        <div class="form-group">
             <label for="acces">Accès *</label>
 
-            <select id="acces" name="acces" required>
+            <select class="form-control" id="acces" name="acces" required>
                 <?php foreach ($optionsAcces as $valeur => $libelle): ?>
                     <option
                             value="<?= echapper($valeur) ?>"
@@ -84,24 +79,23 @@ $erreurSuppression = $erreurSuppression ?? null;
                     </option>
                 <?php endforeach; ?>
             </select>
-        </p>
+        </div>
 
         <?php if (isset($erreurs['acces'])): ?>
-            <p role="alert">
+            <p class="alert alert-error" role="alert">
                 <?= echapper($erreurs['acces']) ?>
             </p>
         <?php endif; ?>
 
-        <button type="submit">Enregistrer</button>
-        <a href="<?= echapper(URL_LISTE_SECTIONS) ?>">Annuler</a>
+        <button class="btn" type="submit">Enregistrer</button>
+        <a class="btn btn-secondary" href="<?= echapper(URL_LISTE_SECTIONS) ?>">Annuler</a>
     </form>
 
-    <hr>
-
-    <h2>Supprimer cette section</h2>
+    <section class="card forum-danger forum-stack" aria-labelledby="suppression-section">
+    <h2 id="suppression-section">Supprimer cette section</h2>
 
     <?php if ($erreurSuppression !== null): ?>
-        <p role="alert">
+        <p class="alert alert-error" role="alert">
             <?= echapper($erreurSuppression) ?>
         </p>
     <?php endif; ?>
@@ -111,7 +105,7 @@ $erreurSuppression = $erreurSuppression ?? null;
         sont liées à cette section.
     </p>
 
-    <form
+    <form class="forum-form"
             method="post"
             action="<?= echapper(URL_MODIFIER_SECTION) ?>"
             onsubmit="return confirm('Supprimer définitivement cette section ?');"
@@ -130,10 +124,9 @@ $erreurSuppression = $erreurSuppression ?? null;
                 value="supprimer"
         >
 
-        <button type="submit">
+        <button class="btn forum-btn-danger" type="submit">
             Supprimer la section
         </button>
     </form>
-</main>
-</body>
-</html>
+    </section>
+</section>

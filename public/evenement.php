@@ -27,10 +27,9 @@ if ($evenement === null && $erreur === null) {
 
 $pageTitle = $evenement !== null ? $evenement['titre'] : 'Événement introuvable';
 
-// Header/footer communs s'ils existent (accueil), sinon repli provisoire.
 $layouts = __DIR__ . '/../views/layouts/';
-$entete = is_file($layouts . 'header.php') ? $layouts . 'header.php' : __DIR__ . '/../views/evenements/_entete_provisoire.php';
-$pied = is_file($layouts . 'footer.php') ? $layouts . 'footer.php' : __DIR__ . '/../views/evenements/_pied_provisoire.php';
+$entete = $layouts . 'header.php';
+$pied = $layouts . 'footer.php';
 
 require $entete;
 require __DIR__ . '/../views/evenements/detailView.php';
