@@ -1,54 +1,138 @@
 <?php
-/**
- * Formulaire de modification d'une section (champs préremplis).
- * Variables attendues : $section (Section), $valeurs (array nom/description), $erreurs (array)
- * (Remplace l'en-tête/pied de page ci-dessous par ceux de ton site.)
- */
+$optionsAcces = [
+        'generale' => 'Général',
+        'etudiants' => 'Étudiants',
+        'medecins' => 'Médecins'
+];
 
-/** @var Section $section */
-/** @var array{nom:string, description:string} $valeurs */
-/** @var array<string,string> $erreurs */
+$erreurSuppression = $erreurSuppression ?? null;
 ?>
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="fr">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Modifier la section</title>
+    <title>Modifier une section</title>
 </head>
 <body>
 <main>
-    <h1>Modifier la section</h1>
+    <h1>
+        Modifier la section :
+        <?= echapper($section->getNomCanal()) ?>
+    </h1>
 
     <?php if (isset($erreurs['general'])): ?>
-        <p class="message message-erreur" role="alert"><?= echapper($erreurs['general']) ?></p>
+        <p role="alert">
+            <?= echapper($erreurs['general']) ?>
+        </p>
     <?php endif; ?>
 
     <form method="post" action="<?= echapper(URL_MODIFIER_SECTION) ?>">
         <?= champCsrf() ?>
-        <input type="hidden" name="id_section" value="<?= (int) $section->getIdSection() ?>">
+
+        <input
+                type="hidden"
+                name="id_canal"
+                value="<?= (int) $section->getIdCanal() ?>"
+        >
 
         <p>
-            <label for="nom">Nom de la section *</label><br>
-            <input type="text" id="nom" name="nom" maxlength="<?= (int) SECTION_NOM_MAX ?>" required
-                   value="<?= echapper($valeurs['nom']) ?>">
-            <?php if (isset($erreurs['nom'])): ?>
-                <span class="message message-erreur" role="alert"><?= echapper($erreurs['nom']) ?></span>
-            <?php endif; ?>
+            <label for="nom">Nom *</label>
+            <input
+                    id="nom"
+                    name="nom"
+                    type="text"
+                    maxlength="<?= SECTION_NOM_MAX ?>"
+                    required
+                    value="<?= echapper($valeurs['nom'] ?? '') ?>"
+            >
         </p>
 
-        <p>
-            <label for="description">Description</label><br>
-            <textarea id="description" name="description" rows="5" maxlength="<?= (int) SECTION_DESCRIPTION_MAX ?>"><?= echapper($valeurs['description']) ?></textarea>
-            <?php if (isset($erreurs['description'])): ?>
-                <span class="message message-erreur" role="alert"><?= echapper($erreurs['description']) ?></span>
-            <?php endif; ?>
-        </p>
+        <?php if (isset($erreurs['nom'])): ?>
+            <p role="alert">
+                <?= echapper($erreurs['nom']) ?>
+            </p>
+        <?php endif; ?>
 
         <p>
-            <button type="submit">Enregistrer</button>
-            <a href="<?= echapper(URL_LISTE_SECTIONS) ?>">Annuler</a>
+            <label for="description">Description (facultative)</label>
+            <textarea
+                    id="description"
+                    name="description"
+                    rows="5"
+                    maxlength="<?= SECTION_DESCRIPTION_MAX ?>"
+            ><?= echapper($valeurs['description'] ?? '') ?></textarea>
         </p>
+
+        <?php if (isset($erreurs['description'])): ?>
+            <p role="alert">
+                <?= echapper($erreurs['description']) ?>
+            </p>
+        <?php endif; ?>
+
+        <p>
+            <label for="acces">Accès *</label>
+
+            <select id="acces" name="acces" required>
+                <?php foreach ($optionsAcces as $valeur => $libelle): ?>
+                    <option
+                            value="<?= echapper($valeur) ?>"
+                            <?= ($valeurs['acces'] ?? '') === $valeur ? 'selected' : '' ?>
+                    >
+                        <?= echapper($libelle) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </p>
+
+        <?php if (isset($erreurs['acces'])): ?>
+            <p role="alert">
+                <?= echapper($erreurs['acces']) ?>
+            </p>
+        <?php endif; ?>
+
+        <button type="submit">Enregistrer</button>
+        <a href="<?= echapper(URL_LISTE_SECTIONS) ?>">Annuler</a>
+    </form>
+
+    <hr>
+
+    <h2>Supprimer cette section</h2>
+
+    <?php if ($erreurSuppression !== null): ?>
+        <p role="alert">
+            <?= echapper($erreurSuppression) ?>
+        </p>
+    <?php endif; ?>
+
+    <p>
+        La suppression est refusée si des publications
+        sont liées à cette section.
+    </p>
+
+    <form
+            method="post"
+            action="<?= echapper(URL_MODIFIER_SECTION) ?>"
+            onsubmit="return confirm('Supprimer définitivement cette section ?');"
+    >
+        <?= champCsrf() ?>
+
+        <input
+                type="hidden"
+                name="id_canal"
+                value="<?= (int) $section->getIdCanal() ?>"
+        >
+
+        <input
+                type="hidden"
+                name="action"
+                value="supprimer"
+        >
+
+        <button type="submit">
+            Supprimer la section
+        </button>
     </form>
 </main>
 </body>

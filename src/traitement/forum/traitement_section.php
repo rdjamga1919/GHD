@@ -1,126 +1,106 @@
 <?php
-/**
- * Traitement des formulaires du module sections : création, modification, suppression.
- * Chaque fonction vérifie elle-même les permissions et le jeton CSRF (défense côté serveur).
- */
-
+/** Traitement métier des sections : admin et CSRF contrôlés côté serveur. */
 require_once __DIR__ . '/outils_forum.php';
-require_once __DIR__ . '/../../repository/SectionRepository.php';
+require_once __DIR__ . '/../../repository/CanalForumRepository.php';
 
-// À ADAPTER aux tailles réelles des colonnes dans le SQL.
-if (!defined('SECTION_NOM_MAX'))         define('SECTION_NOM_MAX', 100);
-if (!defined('SECTION_DESCRIPTION_MAX')) define('SECTION_DESCRIPTION_MAX', 1000);
+const SECTION_NOM_MAX = 100;
+const SECTION_DESCRIPTION_MAX = 1000;
+const SECTION_ACCES = ['generale', 'medecins', 'etudiants'];
 
+/** @return array{nom:string,description:string,acces:string,erreurs:array<string,string>} */
 function validerSaisieSection(array $post): array
 {
-    $nom = (isset($post['nom']) && is_string($post['nom'])) ? trim($post['nom']) : '';
-    $description = (isset($post['description']) && is_string($post['description'])) ? trim($post['description']) : '';
+    $nom = is_string($post['nom'] ?? null) ? trim($post['nom']) : '';
+    $description = is_string($post['description'] ?? null) ? trim($post['description']) : '';
+    $acces = is_string($post['acces'] ?? null) ? trim($post['acces']) : '';
     $erreurs = [];
-
     if ($nom === '') {
-        $erreurs['nom'] = 'Le nom de la section est obligatoire.';
+        $erreurs['nom'] = 'Le nom est obligatoire.';
     } elseif (mb_strlen($nom) > SECTION_NOM_MAX) {
-        $erreurs['nom'] = 'Le nom ne doit pas dépasser ' . SECTION_NOM_MAX . ' caractères.';
+        $erreurs['nom'] = 'Le nom ne doit pas dépasser 100 caractères.';
     }
     if (mb_strlen($description) > SECTION_DESCRIPTION_MAX) {
-        $erreurs['description'] = 'La description ne doit pas dépasser ' . SECTION_DESCRIPTION_MAX . ' caractères.';
+        $erreurs['description'] = 'La description ne doit pas dépasser 1000 caractères.';
     }
-
-    return ['nom' => $nom, 'description' => $description, 'erreurs' => $erreurs];
+    if (!in_array($acces, SECTION_ACCES, true)) {
+        $erreurs['acces'] = 'Choisis un accès valide.';
+    }
+    return compact('nom', 'description', 'acces', 'erreurs');
 }
 
-function traiterCreationSection(SectionRepository $repo): array
+function traiterCreationSection(CanalForumRepository $repo): array
 {
     exigerAdminForum();
-
-    $resultat = ['valeurs' => ['nom' => '', 'description' => ''], 'erreurs' => []];
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        return $resultat;
-    }
-
+    $resultat =
+        ['valeurs' => [
+            'nom' => '',
+            'description' => '',
+            'acces' => 'generale'
+        ],
+            'erreurs' => []
+        ];
+    if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') return $resultat;
     $saisie = validerSaisieSection($_POST);
-    $resultat['valeurs'] = ['nom' => $saisie['nom'], 'description' => $saisie['description']];
-
+    $resultat['valeurs'] = array_intersect_key($saisie, $resultat['valeurs']);
     if (!verifierCsrfForum()) {
-        $resultat['erreurs']['general'] = 'Session expirée ou requête invalide. Veuillez réessayer.';
-        return $resultat;
-    }
-    if ($saisie['erreurs'] !== []) {
+        $resultat['erreurs']['general'] = 'Requête invalide. Actualise la page et réessaie.';
+    } else {
         $resultat['erreurs'] = $saisie['erreurs'];
-        return $resultat;
     }
-
+    if ($resultat['erreurs']) return $resultat;
     try {
-        $repo->insert(new Section($saisie['nom'], $saisie['description'] !== '' ? $saisie['description'] : null));
-    } catch (PDOException $ex) {
-        error_log('[GHD][forum] Echec creation section : ' . $ex->getMessage());
-        $resultat['erreurs']['general'] = 'Impossible d\'enregistrer la section. Veuillez réessayer.';
+        $repo->ajouterCanalForum(new CanalForum(null, $saisie['nom'], $saisie['acces'], $saisie['description'] ?: null));
+    } catch (PDOException $e) {
+        error_log('[GHD][forum] Création canal : ' . $e->getMessage());
+        $resultat['erreurs']['general'] = 'Création impossible. Réessaie.';
         return $resultat;
     }
-
-    redirigerAvecMessageForum(URL_LISTE_SECTIONS, 'succes', 'La section a bien été créée.');
-    exit;
+    redirigerAvecMessageForum(URL_LISTE_SECTIONS, 'succes', 'Section créée.');
 }
 
-function traiterModificationSection(SectionRepository $repo, Section $section): array
+function traiterModificationSection(CanalForumRepository $repo, CanalForum $canal): array
 {
     exigerAdminForum();
-
-    $resultat = [
-        'valeurs' => ['nom' => $section->getNom(), 'description' => (string) $section->getDescription()],
-        'erreurs' => [],
-    ];
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        return $resultat;
-    }
-
+    $resultat = ['valeurs' => [
+        'nom' => $canal->getNomCanal(),
+        'description' => (string) $canal->getDescription(),
+        'acces' => $canal->getAcces(),
+    ], 'erreurs' => []];
+    if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') return $resultat;
     $saisie = validerSaisieSection($_POST);
-    $resultat['valeurs'] = ['nom' => $saisie['nom'], 'description' => $saisie['description']];
-
+    $resultat['valeurs'] = array_intersect_key($saisie, $resultat['valeurs']);
     if (!verifierCsrfForum()) {
-        $resultat['erreurs']['general'] = 'Session expirée ou requête invalide. Veuillez réessayer.';
-        return $resultat;
-    }
-    if ($saisie['erreurs'] !== []) {
+        $resultat['erreurs']['general'] = 'Requête invalide. Actualise la page et réessaie.';
+    } else {
         $resultat['erreurs'] = $saisie['erreurs'];
-        return $resultat;
     }
-
-    $section->setNom($saisie['nom']);
-    $section->setDescription($saisie['description'] !== '' ? $saisie['description'] : null);
-
+    if ($resultat['erreurs']) return $resultat;
+    $canal->setNomCanal($saisie['nom']);
+    $canal->setAcces($saisie['acces']);
+    $canal->setDescription($saisie['description'] ?: null);
     try {
-        $repo->update($section);
-    } catch (PDOException $ex) {
-        error_log('[GHD][forum] Echec modification section : ' . $ex->getMessage());
-        $resultat['erreurs']['general'] = 'Impossible d\'enregistrer les modifications. Veuillez réessayer.';
+        $repo->modifierCanalForum($canal);
+    } catch (PDOException $e) {
+        error_log('[GHD][forum] Modification canal : ' . $e->getMessage());
+        $resultat['erreurs']['general'] = 'Modification impossible. Réessaie.';
         return $resultat;
     }
-
-    redirigerAvecMessageForum(URL_LISTE_SECTIONS, 'succes', 'La section a bien été modifiée.');
-    exit;
+    redirigerAvecMessageForum(URL_LISTE_SECTIONS, 'succes', 'Section modifiée.');
 }
 
-function traiterSuppressionSection(SectionRepository $repo, Section $section): ?string
+/** Suppression uniquement en POST et après contrôle du nombre de publications. */
+function traiterSuppressionSection(CanalForumRepository $repo, CanalForum $canal): ?string
 {
     exigerAdminForum();
-
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        return null; // GET : page de confirmation seulement, aucune suppression.
-    }
-    if (!verifierCsrfForum()) {
-        return 'Session expirée ou requête invalide. Veuillez réessayer.';
-    }
-
+    if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') return 'Méthode non autorisée.';
+    if (!verifierCsrfForum()) return 'Requête invalide. Actualise la page et réessaie.';
     try {
-        $repo->delete((int) $section->getIdSection());
-    } catch (RuntimeException $ex) {
-        return $ex->getMessage(); // section liée à des publications
-    } catch (PDOException $ex) {
-        error_log('[GHD][forum] Echec suppression section : ' . $ex->getMessage());
-        return 'Suppression impossible : la section est encore utilisée ou la base est indisponible.';
+        $repo->supprimerCanalForum((int) $canal->getIdCanal());
+    } catch (RuntimeException $e) {
+        return $e->getMessage();
+    } catch (PDOException $e) {
+        error_log('[GHD][forum] Suppression canal : ' . $e->getMessage());
+        return 'Suppression impossible. Vérifie les dépendances du canal.';
     }
-
-    redirigerAvecMessageForum(URL_LISTE_SECTIONS, 'succes', 'La section a bien été supprimée.');
-    exit;
+    redirigerAvecMessageForum(URL_LISTE_SECTIONS, 'succes', 'Section supprimée.');
 }
