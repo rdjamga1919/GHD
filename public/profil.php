@@ -1,4 +1,5 @@
 <?php
+ob_start();
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deconnexion'])) {
@@ -86,14 +87,7 @@ switch ($_SESSION['role']) {
         exit("Accès non autorisé.");
 }
 ?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon profil – GHD-HSP</title>
-</head>
-<body>
+<?php require __DIR__ . '/../views/layouts/header.php'; ?>
 
 <?php
 // Inclusion de la vue spécifique au rôle de l'utilisateur
@@ -113,8 +107,7 @@ switch ($_SESSION['role']) {
 ?>
 
 <form method="post" action="profil.php">
-    <button type="submit" name="deconnexion">Se déconnecter</button>
+    <button type="submit" name="deconnexion" class="btn">Se déconnecter</button>
 </form>
 
-</body>
-</html>
+<?php require __DIR__ . '/../views/layouts/footer.php'; ?>

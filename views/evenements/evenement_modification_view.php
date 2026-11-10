@@ -45,14 +45,14 @@ function valeurChampEvenement(
             maxlength="150"
             value="<?= valeurChampEvenement('titre', $evenement->getTitre(), $valeursFormulaire) ?>"
             required
-    >
+     class="form-control">
 
     <label for="description">Description</label>
     <textarea
             id="description"
             name="description"
             maxlength="2000"
-    ><?= valeurChampEvenement('description', $evenement->getDescription(), $valeursFormulaire) ?></textarea>
+     class="form-control"><?= valeurChampEvenement('description', $evenement->getDescription(), $valeursFormulaire) ?></textarea>
 
     <label for="type_evenement">Type d'événement</label>
     <input
@@ -62,7 +62,7 @@ function valeurChampEvenement(
             maxlength="50"
             value="<?= valeurChampEvenement('type_evenement', $evenement->getTypeEvenement(), $valeursFormulaire) ?>"
             required
-    >
+     class="form-control">
 
     <label for="adresse_lieu">Adresse</label>
     <input
@@ -72,7 +72,7 @@ function valeurChampEvenement(
             maxlength="255"
             value="<?= valeurChampEvenement('adresse_lieu', $evenement->getAdresseLieu(), $valeursFormulaire) ?>"
             required
-    >
+     class="form-control">
 
     <label for="element_requis">Éléments requis</label>
     <input
@@ -81,7 +81,7 @@ function valeurChampEvenement(
             name="element_requis"
             maxlength="255"
             value="<?= valeurChampEvenement('element_requis', $evenement->getElementRequis(), $valeursFormulaire) ?>"
-    >
+     class="form-control">
 
     <label for="nombre_place">Nombre de places</label>
     <input
@@ -92,7 +92,7 @@ function valeurChampEvenement(
             max="1000"
             value="<?= valeurChampEvenement('nombre_place', $evenement->getNombrePlace(), $valeursFormulaire) ?>"
             required
-    >
+     class="form-control">
 
     <label for="date_heure_evenement">Date et heure</label>
     <input
@@ -105,9 +105,9 @@ function valeurChampEvenement(
                     $valeursFormulaire
             ) ?>"
             required
-    >
+     class="form-control">
 
-    <button type="submit" name="action" value="modifier">
+    <button type="submit" name="action" value="modifier" class="btn">
         Enregistrer les modifications
     </button>
 

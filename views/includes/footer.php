@@ -1,4 +1,5 @@
 
+</div>
 </main>
 
 <footer class="site-footer">
@@ -18,8 +19,13 @@
             <div class="footer-links">
                 <h3>Navigation</h3>
                 <a href="/GHD/public/index.php">Accueil</a>
-                <a href="/GHD/public/annuaire.php">Annuaire</a>
-                <a href="/GHD/public/profil.php">Mon profil</a>
+                <a href="/GHD/public/a_propos.php">À propos</a>
+                <?php if (isset($_SESSION['utilisateur_id'])): ?>
+                    <a href="/GHD/public/annuaire.php">Annuaire</a>
+                    <?php if (in_array($_SESSION['role'] ?? '', ['etudiant', 'medecin', 'partenaire'], true)): ?>
+                        <a href="/GHD/public/profil.php">Mon profil</a>
+                    <?php endif; ?>
+                <?php endif; ?>
             </div>
 
         </div>

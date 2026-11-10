@@ -1,4 +1,5 @@
 <?php
+ob_start();
 
 session_start();
 
@@ -49,29 +50,20 @@ if (isset($_GET['id'])) {
 
 ?>
 
-<!DOCTYPE html>
-<html lang="fr">
+<?php require __DIR__ . '/../views/layouts/header.php'; ?>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Établissements - GHD</title>
-</head>
+<section>
 
-<body>
-
-<main>
-
-    <h1>Établissements d'enseignement</h1>
+    <h1 class="page-title">Établissements d'enseignement</h1>
 
     <?php foreach ($erreurs as $erreur): ?>
-        <p style="color: red;">
+        <p class="text-danger">
             <?= htmlspecialchars($erreur, ENT_QUOTES, 'UTF-8') ?>
         </p>
     <?php endforeach; ?>
 
     <?php if ($succes !== ''): ?>
-        <p style="color: green;">
+        <p class="text-success">
             <?= htmlspecialchars($succes, ENT_QUOTES, 'UTF-8') ?>
         </p>
     <?php endif; ?>
@@ -129,24 +121,24 @@ if (isset($_GET['id'])) {
                         <label for="nom">Nom de l'établissement</label>
                         <input type="text" id="nom" name="nom_etablissement"
                                maxlength="150" required
-                               value="<?= htmlspecialchars($ancien['nom_etablissement'] ?? $etablissement->getNom(), ENT_QUOTES, 'UTF-8') ?>">
+                               value="<?= htmlspecialchars($ancien['nom_etablissement'] ?? $etablissement->getNom(), ENT_QUOTES, 'UTF-8') ?>" class="form-control">
                     </p>
 
                     <p>
                         <label for="adresse">Adresse</label>
                         <input type="text" id="adresse" name="adresse"
                                maxlength="255" required
-                               value="<?= htmlspecialchars($ancien['adresse'] ?? $etablissement->getAdresse(), ENT_QUOTES, 'UTF-8') ?>">
+                               value="<?= htmlspecialchars($ancien['adresse'] ?? $etablissement->getAdresse(), ENT_QUOTES, 'UTF-8') ?>" class="form-control">
                     </p>
 
                     <p>
                         <label for="site_web">Site web</label>
                         <input type="url" id="site_web" name="site_web"
                                maxlength="255" required
-                               value="<?= htmlspecialchars($ancien['site_web'] ?? $etablissement->getSiteWeb(), ENT_QUOTES, 'UTF-8') ?>">
+                               value="<?= htmlspecialchars($ancien['site_web'] ?? $etablissement->getSiteWeb(), ENT_QUOTES, 'UTF-8') ?>" class="form-control">
                     </p>
 
-                    <button type="submit">Enregistrer les modifications</button>
+                    <button type="submit" class="btn">Enregistrer les modifications</button>
 
                     <a href="etablissement.php?id=<?= (int) $etablissement->getIdEtablissement() ?>">
                         Annuler
@@ -172,9 +164,9 @@ if (isset($_GET['id'])) {
                     name="q"
                     value="<?= htmlspecialchars($recherche, ENT_QUOTES, 'UTF-8') ?>"
                     placeholder="Rechercher un établissement"
-            >
+             class="form-control">
 
-            <button type="submit">Rechercher</button>
+            <button type="submit" class="btn">Rechercher</button>
             <a href="etablissement.php">Réinitialiser</a>
         </form>
 
@@ -186,7 +178,7 @@ if (isset($_GET['id'])) {
 
         <?php else: ?>
 
-            <table border="1" cellpadding="8">
+            <div class="table-wrap"><table border="1" cellpadding="8">
                 <thead>
                 <tr>
                     <th>Nom</th>
@@ -214,7 +206,7 @@ if (isset($_GET['id'])) {
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
-            </table>
+            </table></div>
 
         <?php endif; ?>
 
@@ -242,7 +234,7 @@ if (isset($_GET['id'])) {
                         maxlength="150"
                         required
                         value="<?= htmlspecialchars($ancien['nom_etablissement'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
-                >
+                 class="form-control">
             </p>
 
             <p>
@@ -254,7 +246,7 @@ if (isset($_GET['id'])) {
                         maxlength="255"
                         required
                         value="<?= htmlspecialchars($ancien['adresse'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
-                >
+                 class="form-control">
             </p>
 
             <p>
@@ -267,16 +259,15 @@ if (isset($_GET['id'])) {
                         required
                         placeholder="https://www.exemple.fr"
                         value="<?= htmlspecialchars($ancien['site_web'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
-                >
+                 class="form-control">
             </p>
 
-            <button type="submit">Ajouter l'établissement</button>
+            <button type="submit" class="btn">Ajouter l'établissement</button>
 
         </form>
 
     <?php endif; ?>
 
-</main>
+</section>
 
-</body>
-</html>
+<?php require __DIR__ . '/../views/layouts/footer.php'; ?>

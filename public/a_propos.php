@@ -1,4 +1,5 @@
 <?php
+ob_start();
 /**
  * Page « À propos » : présentation du groupe GHD et de l’hôpital HSP.
  * Sources : cahier des charges du projet (contexte, expression de besoin).
@@ -63,54 +64,18 @@ if ($referer !== '') {
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="fr">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Découvrez le groupe GHD, l’hôpital Sud Paris et la plateforme qui relie médecins, étudiants en médecine et entreprises partenaires.">
-
-    <title><?= e($page_title) ?> · <?= e($site_name) ?></title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
-
-    <link rel="stylesheet" href="assets/css/variables.css">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/components.css">
-</head>
-
-<body>
+<?php require __DIR__ . '/../views/layouts/header.php'; ?>
 
 <a class="skip-link" href="#contenu">Aller au contenu</a>
 
 <!-- En-tête -->
-<header class="site-header">
-    <div class="site-header-inner">
-        <a class="brand" href="index.php"><?= e($site_name) ?></a>
 
-        <nav class="site-nav" aria-label="Navigation principale">
-            <?php foreach ($navigation as $fichier => $libelle): ?>
-                <a href="<?= e($fichier) ?>"<?= $fichier === $current_page ? ' aria-current="page"' : '' ?>>
-                    <?= e($libelle) ?>
-                </a>
-            <?php endforeach; ?>
-        </nav>
 
-        <div class="site-actions">
-            <a class="btn btn-secondary" href="connexion.php">Connexion</a>
-            <a class="btn" href="inscription.php">Inscription</a>
-        </div>
-    </div>
-</header>
-
-<main id="contenu" class="container">
+<section id="contenu" class="container">
 
     <!-- Bouton retour -->
     <div>
-        <a class="back-link" href="<?= e($retour_url) ?>" data-retour>
+        <a class="back-link" href="/GHD/public/index.php" data-retour>
             <span aria-hidden="true">←</span> Retour
         </a>
     </div>
@@ -125,7 +90,7 @@ if ($referer !== '') {
         </p>
         <div class="cluster">
             <a class="btn btn-accent" href="inscription.php">Rejoindre le réseau</a>
-            <a class="btn btn-secondary" href="contact.php">Nous contacter</a>
+            <a class="btn btn-secondary" href="#titre-groupe">Découvrir le groupe</a>
         </div>
     </section>
 
@@ -186,7 +151,7 @@ if ($referer !== '') {
 
             <div>
                 <p class="user-name">Des compétences diverses et complémentaires</p>
-                <div class="cluster" style="margin-top: var(--space-sm)">
+                <div class="cluster space-before-sm">
                     <?php foreach ($poles as $pole): ?>
                         <span class="tag"><?= e($pole) ?></span>
                     <?php endforeach; ?>
@@ -311,37 +276,14 @@ if ($referer !== '') {
     <!-- Contact -->
     <section class="card">
         <h2 class="card-title">Une question sur la plateforme ?</h2>
-        <p class="prose">Les gestionnaires vous répondent via le formulaire de contact.</p>
+        <p class="prose">Retrouvez la présentation de la plateforme et ses espaces depuis l’accueil.</p>
         <div>
-            <a class="btn" href="contact.php">Accéder au formulaire de contact</a>
+            <a class="btn" href="/GHD/public/index.php">Retour à l’accueil</a>
         </div>
     </section>
 
-</main>
+</section>
 
 <!-- Pied de page -->
-<footer class="site-footer">
-    <div class="site-footer-inner">
-        <p>© <?= date('Y') ?> <?= e($site_name) ?> · Plateforme de mise en relation du groupe</p>
-        <p><a href="contact.php">Aide et contact</a></p>
-    </div>
-</footer>
 
-<script>
-    // Retour : utilise l’historique du navigateur si la page précédente est sur ce site,
-    // sinon le lien (href) sert de solution de secours.
-    document.querySelectorAll('[data-retour]').forEach(function (lien) {
-        lien.addEventListener('click', function (event) {
-            var memeSite = document.referrer &&
-                new URL(document.referrer).origin === window.location.origin;
-
-            if (memeSite && window.history.length > 1) {
-                event.preventDefault();
-                window.history.back();
-            }
-        });
-    });
-</script>
-
-</body>
-</html>
+<?php require __DIR__ . '/../views/layouts/footer.php'; ?>

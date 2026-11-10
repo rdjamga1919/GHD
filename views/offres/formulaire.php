@@ -3,180 +3,8 @@
 $val = fn(string $k) => htmlspecialchars((string) ($old[$k] ?? $offre[$k] ?? ''));
 $typeActuel = (string) ($old['type_d_offre'] ?? $offre['type_d_offre'] ?? '');
 ?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($titrePage ?? 'Gestion d\'une offre') ?> – GHD-HSP</title>
 
-    <style>
-        :root {
-            --primary: #126779;
-            --primary-hover: #0f5766;
-            --primary-pressed: #0b434f;
-            --navy: #102f40;
-            --accent: #62c8ba;
-            --focus: #258cba;
-            --surface: #ffffff;
-            --surface-soft: #f8fafb;
-            --surface-teal: #f0f7f7;
-            --text: #1e293b;
-            --text-muted: #64748b;
-            --success: #15803d;
-            --success-bg: #f0fdf4;
-            --danger: #b91c1c;
-            --danger-bg: #fef2f2;
-            --border: #e2e8f0;
-            --border-strong: #cbd5e1;
-            --border-accent: #62c8ba;
-            --radius-md: 8px;
-            --radius-lg: 16px;
-            --transition: 0.2s ease-in-out;
-            --shadow: 0 10px 25px -5px rgba(16, 47, 64, 0.1);
-        }
-
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            max-width: 700px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: var(--surface-soft);
-            color: var(--text);
-        }
-
-        h2 {
-            color: var(--navy);
-            font-size: 24px;
-            margin-bottom: 24px;
-            letter-spacing: -0.02em;
-        }
-
-        /* GHD-HSP Composants */
-        .card {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            padding: 32px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            box-shadow: 0 3px 12px rgba(16, 47, 64, 0.025);
-            margin-bottom: 24px;
-            transition: border-color var(--transition), box-shadow var(--transition);
-        }
-
-        .card:hover {
-            border-color: var(--border-strong);
-            box-shadow: var(--shadow);
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        label {
-            color: var(--text);
-            font-size: 13px;
-            line-height: 21px;
-            font-weight: 600;
-        }
-
-        .form-control, input[type="text"], select, textarea {
-            display: block;
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            background: var(--surface);
-            color: var(--text);
-            font: inherit;
-            font-size: 14px;
-            box-sizing: border-box;
-            transition: border-color var(--transition), box-shadow var(--transition);
-        }
-
-        textarea.form-control, textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        .form-control:hover, input:hover, select:hover, textarea:hover {
-            border-color: var(--border-strong);
-        }
-
-        .form-control:focus, input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--focus);
-            box-shadow: 0 0 0 4px rgba(37, 140, 186, 0.11);
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 9px;
-            min-height: 44px;
-            padding: 11px 18px;
-            border: 1px solid var(--primary);
-            border-radius: var(--radius-md);
-            background: linear-gradient(135deg, #147786, var(--primary));
-            box-shadow: 0 3px 8px rgba(18, 103, 121, 0.10);
-            color: #fff;
-            font-size: 13px;
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-            width: 100%;
-            transition: background var(--transition), border-color var(--transition), box-shadow var(--transition), transform var(--transition);
-        }
-
-        .btn:hover {
-            background: var(--primary-hover);
-            border-color: var(--primary-hover);
-            transform: translateY(-1px);
-        }
-
-        .btn-ghost {
-            background: var(--surface);
-            border-color: var(--border);
-            box-shadow: none;
-            color: var(--primary);
-            width: auto;
-        }
-
-        .btn-ghost:hover {
-            background: var(--surface-teal);
-            border-color: var(--border-accent);
-            color: var(--primary);
-        }
-
-        .message {
-            padding: 15px 17px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-
-        .message-succes {
-            background: var(--success-bg);
-            border: 1px solid #d7eddf;
-            color: var(--success);
-        }
-
-        .message-erreur {
-            background: var(--danger-bg);
-            border: 1px solid #f3d8dc;
-            color: var(--danger);
-        }
-    </style>
-</head>
-<body>
-
-<h2><?= htmlspecialchars($titrePage ?? 'Gestion d\'une offre') ?></h2>
+<h1 class="page-title"><?= htmlspecialchars($titrePage ?? 'Gestion d\'une offre') ?></h1>
 
 <?php if (!empty($flash)): ?>
     <div class="message message-<?= $flash[0] === 'succes' ? 'succes' : 'erreur' ?>">
@@ -185,7 +13,7 @@ $typeActuel = (string) ($old['type_d_offre'] ?? $offre['type_d_offre'] ?? '');
 <?php endif; ?>
 
 <div class="card">
-    <form method="post" action="../src/traitement/traitement_offre.php" style="display: flex; flex-direction: column; gap: 20px;">
+    <form method="post" action="../src/traitement/traitement_offre.php" class="content-stack">
         <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
         <input type="hidden" name="action" value="<?= htmlspecialchars($action) ?>">
         <?php if ($offre !== null): ?>
@@ -222,7 +50,7 @@ $typeActuel = (string) ($old['type_d_offre'] ?? $offre['type_d_offre'] ?? '');
             <input type="text" id="salaire" name="salaire" class="form-control" value="<?= $val('salaire') ?>" placeholder="Ex: 1200">
         </div>
 
-        <button type="submit" class="btn" style="margin-top: 8px;">
+        <button type="submit" class="btn space-before-sm">
             <?= $action === 'creer' ? "Publier l'offre" : 'Enregistrer' ?>
         </button>
     </form>
@@ -231,6 +59,3 @@ $typeActuel = (string) ($old['type_d_offre'] ?? $offre['type_d_offre'] ?? '');
 <p>
     <a href="offres.php" class="btn btn-ghost">← Retour aux offres</a>
 </p>
-
-</body>
-</html>
