@@ -1,4 +1,5 @@
 <?php
+ob_start();
 //page : public/admin/gestionUtilisateur
 session_start();
 require_once __DIR__ . '/../../src/inclues/authentification.php';
@@ -39,10 +40,10 @@ $message = $_SESSION['message'] ?? '';
 $messageType = $_SESSION['messageType'] ?? '';
 unset($_SESSION['message'], $_SESSION['messageType']);
 
-require_once __DIR__ . '/../../src/inclues/header.php';
+require_once __DIR__ . '/../../views/layouts/header.php';
 ?>
 
-    <h1>Comptes en attente de validation</h1>
+    <h1 class="page-title">Comptes en attente de validation</h1>
 
 <?php if ($message !== ''): ?>
     <div class="message message-<?= htmlspecialchars($messageType) ?>">
@@ -60,7 +61,7 @@ require_once __DIR__ . '/../../src/inclues/header.php';
 
 <?php else: ?>
 
-    <table class="table-admin">
+    <div class="table-wrap"><table class="table-admin">
         <thead>
         <tr>
             <th>Nom</th>
@@ -101,8 +102,8 @@ require_once __DIR__ . '/../../src/inclues/header.php';
             </tr>
         <?php endforeach; ?>
         </tbody>
-    </table>
+    </table></div>
 
 <?php endif; ?>
 
-<?php require_once __DIR__ . '/../../src/inclues/footer.php'; ?>
+<?php require_once __DIR__ . '/../../views/layouts/footer.php'; ?>

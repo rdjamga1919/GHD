@@ -9,7 +9,7 @@ function echapperSuppression($valeur): string
 }
 ?>
 
-<main class="container">
+<section class="container">
     <h1>Supprimer un événement</h1>
 
     <?php if ($erreur !== null): ?>
@@ -64,7 +64,7 @@ function echapperSuppression($valeur): string
                 type="submit"
                 name="action"
                 value="supprimer"
-            >
+             class="btn btn-danger">
                 Confirmer la suppression
             </button>
 
@@ -74,4 +74,4 @@ function echapperSuppression($valeur): string
     <a href="evenement_detail.php?id=<?= (int) $evenement->getIdEvenement() ?>">
         Annuler
     </a>
-</main>
+</section>

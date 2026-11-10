@@ -63,6 +63,14 @@
     --space-section: 30px;
     --space-xl: 36px;
 
+    /* Largeurs du contenu, indépendantes des fonds pleine largeur. */
+    --content-max: 1152px;
+    --content-detail: 1000px;
+    --content-form: 800px;
+    --content-text: 840px;
+    --page-gutter: clamp(16px, 3vw, 32px);
+    --site-header-height: 80px;
+
     /* Formes */
     --radius-sm: 6px;
     --radius-md: 10px;

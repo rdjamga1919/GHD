@@ -13,17 +13,17 @@ $libellesRoles = [
     'gestionnaire' => 'Gestionnaire',
 ];
 ?>
-<link rel="stylesheet" href="../ressources/css/evenements.css">
+
 <section class="page-evenement">
     <p><a class="lien-retour" href="evenements.php">← Retour aux événements</a></p>
 
     <?php if ($erreur !== null): ?>
-        <p class="message message-erreur"><?= echapper($erreur) ?></p>
+        <p class="alert alert-error"><?= echapper($erreur) ?></p>
 
     <?php elseif ($evenement === null): ?>
         <h1>Événement introuvable</h1>
         <p class="message">Cet événement n'existe pas ou n'est plus disponible.</p>
-        <a class="bouton" href="evenements.php">Voir tous les événements</a>
+        <a class="btn" href="evenements.php">Voir tous les événements</a>
 
     <?php else: ?>
         <?php
@@ -31,9 +31,9 @@ $libellesRoles = [
         $capacite = (int) $evenement['nombre_place'];
         $placesRestantes = max(0, $capacite - (int) $evenement['nb_inscrits']);
         ?>
+        <h1 class="page-title"><?= echapper($evenement['titre']) ?></h1>
         <article class="carte carte-evenement-detail">
-            <p class="etiquette"><?= echapper($evenement['type_evenement']) ?></p>
-            <h1><?= echapper($evenement['titre']) ?></h1>
+            <p class="tag"><?= echapper($evenement['type_evenement']) ?></p>
 
             <ul class="infos">
                 <li><strong>Date :</strong> <?= $timestamp ? echapper(date('d/m/Y à H\hi', $timestamp)) : 'à confirmer' ?></li>
@@ -66,7 +66,7 @@ $libellesRoles = [
 
             <?php if (empty($_SESSION['utilisateur_id'])): ?>
                 <p class="meta">Connectez-vous pour vous inscrire à un événement.</p>
-                <a class="bouton" href="connexion.php">Se connecter</a>
+                <a class="btn" href="connexion.php">Se connecter</a>
             <?php endif; ?>
         </article>
     <?php endif; ?>

@@ -1,4 +1,5 @@
 <?php
+ob_start();
 session_start();
 
 require_once __DIR__ . '/../src/inclues/authentification.php';
@@ -16,4 +17,6 @@ unset($_SESSION['flash']);
 $estPartenaire = ($_SESSION['role'] ?? '') === 'partenaire';
 
 // Inclusion de la vue associée pour l'affichage de la liste
-require_once __DIR__ . '/../views/offres/liste.php';
+require __DIR__ . '/../views/layouts/header.php';
+        require_once __DIR__ . '/../views/offres/liste.php';
+        require __DIR__ . '/../views/layouts/footer.php';

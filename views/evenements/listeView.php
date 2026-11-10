@@ -7,12 +7,12 @@ if (!function_exists('echapper')) {
     }
 }
 ?>
-<link rel="stylesheet" href="../ressources/css/evenements.css">
+
 <section class="page-evenements">
     <h1>Événements</h1>
 
     <?php if ($erreur !== null): ?>
-        <p class="message message-erreur"><?= echapper($erreur) ?></p>
+        <p class="alert alert-error"><?= echapper($erreur) ?></p>
     <?php elseif (empty($evenements)): ?>
         <p class="message">Aucun événement n'est disponible pour le moment.</p>
     <?php else: ?>
@@ -24,7 +24,7 @@ if (!function_exists('echapper')) {
                 $description = mb_strimwidth((string) $ev['description'], 0, 160, '…', 'UTF-8');
                 ?>
                 <article class="carte carte-evenement">
-                    <p class="etiquette"><?= echapper($ev['type_evenement']) ?><?= $passe ? ' · Terminé' : '' ?></p>
+                    <p class="tag"><?= echapper($ev['type_evenement']) ?><?= $passe ? ' · Terminé' : '' ?></p>
                     <h2><?= echapper($ev['titre']) ?></h2>
                     <p class="meta">
                         Date : <?= $timestamp ? echapper(date('d/m/Y à H\hi', $timestamp)) : 'à confirmer' ?><br>
@@ -35,7 +35,7 @@ if (!function_exists('echapper')) {
                         Organisé par :
                         <?= !empty($ev['organisateurs']) ? echapper($ev['organisateurs']) : 'non renseigné' ?>
                     </p>
-                    <a class="bouton" href="evenement.php?id=<?= (int) $ev['id_evenement'] ?>">Voir les détails</a>
+                    <a class="btn" href="evenement.php?id=<?= (int) $ev['id_evenement'] ?>">Voir les détails</a>
                 </article>
             <?php endforeach; ?>
         </div>

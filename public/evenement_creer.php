@@ -1,4 +1,5 @@
 <?php
+ob_start();
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -13,4 +14,6 @@ if (!hasRole('medecin') && !hasRole('partenaire')) {
     exit('Accès refusé.');
 }
 require_once __DIR__ . '/../src/traitement/traitement_creation_evenement.php';
-require_once __DIR__ . '/../views/evenements/evenement_creation_view.php';
+require __DIR__ . '/../views/layouts/header.php';
+        require_once __DIR__ . '/../views/evenements/evenement_creation_view.php';
+        require __DIR__ . '/../views/layouts/footer.php';

@@ -1,28 +1,6 @@
-<!DOCTYPE html>
-<html lang="fr">
+<?php require __DIR__ . '/../views/layouts/header.php'; ?>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta name="theme-color" content="#102f40">
-    <meta name="description" content="Bibliothèque de composants et identité visuelle GHD-HSP.">
-
-    <title>Design System — GHD-HSP</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-
-    <link rel="stylesheet" href="assets/css/variables.css">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/components.css">
-</head>
-
-<body>
-
-<main class="container">
+<section class="container">
 
     <header class="page-header">
         <p class="eyebrow">GHD-HSP / DESIGN SYSTEM</p>
@@ -32,7 +10,7 @@
             cohérente, accessible et conçue pour les usages hospitalo-universitaires.
         </p>
 
-        <div class="cluster" style="margin-top: 8px;">
+        <div class="cluster space-before-sm">
             <span class="tag">Version 1.0</span>
             <span class="caption">Bibliothèque de composants réutilisables</span>
         </div>
@@ -191,7 +169,7 @@
         </p>
 
         <div class="table-wrap">
-            <table class="table">
+            <div class="table-wrap"><table class="table">
                 <thead>
                 <tr>
                     <th scope="col">Membre</th>
@@ -235,7 +213,7 @@
                     <td><span class="tag tag--success">Validé</span></td>
                 </tr>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </section>
 
@@ -272,10 +250,10 @@
             <p class="sidebar-label">Espace gestionnaire</p>
 
             <nav class="nav" aria-label="Exemple de navigation">
-                <a class="nav-link is-active" href="#"
-                   aria-current="page">Tableau de bord</a>
-                <a class="nav-link" href="#">Utilisateurs</a>
-                <a class="nav-link" href="#">Contenus</a>
+                <span class="nav-link is-active"
+                   aria-current="page">Tableau de bord</span>
+                <span class="nav-link" >Utilisateurs</span>
+                <span class="nav-link" >Contenus</span>
             </nav>
 
             <p class="sidebar-note">
@@ -301,22 +279,22 @@
              aria-label="Exemple : 9, 14, 28 et 18 validations">
             <div class="chart-col">
                 <span class="chart-value">9</span>
-                <div class="bar" style="--h:45px"></div>
+                <div class="bar demo-bar-small"></div>
                 <span class="chart-day">Lun.</span>
             </div>
             <div class="chart-col">
                 <span class="chart-value">14</span>
-                <div class="bar" style="--h:72px"></div>
+                <div class="bar demo-bar-medium"></div>
                 <span class="chart-day">Mar.</span>
             </div>
             <div class="chart-col">
                 <span class="chart-value">28</span>
-                <div class="bar is-peak" style="--h:138px"></div>
+                <div class="bar is-peak demo-bar-tall"></div>
                 <span class="chart-day">Mer.</span>
             </div>
             <div class="chart-col">
                 <span class="chart-value">18</span>
-                <div class="bar" style="--h:88px"></div>
+                <div class="bar demo-bar-large"></div>
                 <span class="chart-day">Jeu.</span>
             </div>
         </div>
@@ -326,7 +304,6 @@
         GHD-HSP · Design System V1 · Bibliothèque de composants visuels
     </footer>
 
-</main>
+</section>
 
-</body>
-</html>
+<?php require __DIR__ . '/../views/layouts/footer.php'; ?>
