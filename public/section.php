@@ -1,11 +1,11 @@
 <?php
-require_once __DIR__ . '/../src/traitement/forum/outils_forum.php';
-require_once __DIR__ . '/../src/repository/CanalForumRepository.php';
+require_once __DIR__ . '/../src/traitement/forum/traitement_publication.php';
 
 exigerConnexionForum();
 
 $estAdmin = estAdminForum();
 $section = null;
+$publications = [];
 $erreur = null;
 $id = lireIdSection($_GET['id'] ?? null);
 if ($id === null) {
@@ -20,6 +20,11 @@ if ($id === null) {
         } elseif (!peutConsulterCanalForum($section)) {
             http_response_code(403);
             exit('Accès refusé.');
+        } else {
+            $publications = (new PostForumRepository())->getPublicationsVisibles(
+                (string) ($_SESSION['role'] ?? ''),
+                (int) $section->getIdCanal()
+            );
         }
     } catch (PDOException $e) {
         error_log('[GHD][forum] Recherche section : ' . $e->getMessage());
@@ -28,4 +33,9 @@ if ($id === null) {
     }
 }
 
+$pageTitle = 'Détail de section';
+$activePage = 'forum';
+$bodyClass = 'forum-layout';
+require __DIR__ . '/../views/layouts/header.php';
 require __DIR__ . '/../views/forum/sections/detailSectionView.php';
+require __DIR__ . '/../views/layouts/footer.php';
