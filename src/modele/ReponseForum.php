@@ -6,6 +6,9 @@ class ReponseForum
     private $date_heure_reponse;
     private $ref_post;
     private $ref_utilisateur;
+    // Infos de l'auteur (remplies quand on lit une réponse depuis la BDD)
+    private $nom_auteur;
+    private $prenom_auteur;
 
     /**
      * @param $id_reponse
@@ -13,14 +16,18 @@ class ReponseForum
      * @param $contenu
      * @param $date_heure_reponse
      * @param $ref_utilisateur
+     * @param $nom_auteur
+     * @param $prenom_auteur
      */
-    public function __construct($id_reponse, $ref_post, $contenu, $date_heure_reponse, $ref_utilisateur)
+    public function __construct($id_reponse, $ref_post, $contenu, $date_heure_reponse, $ref_utilisateur, $nom_auteur = null, $prenom_auteur = null)
     {
         $this->id_reponse = $id_reponse;
         $this->ref_post = $ref_post;
         $this->contenu = $contenu;
         $this->date_heure_reponse = $date_heure_reponse;
         $this->ref_utilisateur = $ref_utilisateur;
+        $this->nom_auteur = $nom_auteur;
+        $this->prenom_auteur = $prenom_auteur;
     }
 
     /**
@@ -103,5 +110,20 @@ class ReponseForum
         $this->contenu = $contenu;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getNomAuteur()
+    {
+        return $this->nom_auteur;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPrenomAuteur()
+    {
+        return $this->prenom_auteur;
+    }
 
 }
