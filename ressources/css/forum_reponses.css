@@ -1,0 +1,31 @@
+/* Styles du module "réponses du forum" (limités à la classe .forum-reponses) */
+
+.forum-reponses { max-width: 700px; margin: 40px auto; padding: 0 20px; font-family: Arial, sans-serif; color: #333; }
+.forum-reponses h1 { margin-bottom: 20px; font-size: 1.5rem; }
+
+/* Messages */
+.forum-reponses .alert { padding: 14px 18px; border-radius: 6px; margin-bottom: 20px; font-size: 0.9rem; }
+.forum-reponses .alert-success { background: #d4edda; border-left: 4px solid #28a745; color: #155724; }
+.forum-reponses .alert-error   { background: #f8d7da; border-left: 4px solid #dc3545; color: #721c24; }
+
+/* Formulaire */
+.forum-reponses .card { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); padding: 24px; }
+.forum-reponses label { display: block; margin-bottom: 6px; font-weight: bold; }
+.forum-reponses textarea { box-sizing: border-box; width: 100%; padding: 11px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; font-size: 15px; resize: vertical; }
+.forum-reponses textarea:focus { outline: none; border-color: #2563eb; }
+
+/* Boutons */
+.forum-reponses .btn { display: inline-block; padding: 8px 16px; border: none; border-radius: 5px; background: #2563eb; color: #fff; font-size: 14px; font-weight: bold; text-decoration: none; cursor: pointer; }
+.forum-reponses .btn:hover { opacity: 0.85; }
+.forum-reponses .btn-danger { background: #dc3545; }
+.forum-reponses .card .btn { margin-top: 16px; }
+.forum-reponses .lien-retour { display: inline-block; margin-top: 20px; color: #2563eb; }
+
+/* Liste des réponses */
+.forum-reponses .reponse { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); padding: 16px 20px; margin-bottom: 14px; }
+.forum-reponses .reponse-entete { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; font-size: 0.9rem; }
+.forum-reponses .reponse-date { color: #777; }
+.forum-reponses .reponse-actions { display: flex; gap: 8px; margin-top: 12px; }
+.forum-reponses .reponse-actions form { margin: 0; }
+.forum-reponses .reponses-vide { color: #777; text-align: center; padding: 30px 0; }
+.forum-reponses .barre-haut { display: flex; justify-content: flex-end; margin-bottom: 16px; }
