@@ -214,3 +214,148 @@
 }
 
 
+
+/* Forum : mise en page limitée aux pages Sections et Publications. */
+body.forum-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100svh;
+}
+
+.forum-layout > #main-content {
+    flex: 1 0 auto;
+    min-width: 0;
+    width: 100%;
+}
+
+.forum-layout > .site-header,
+.forum-layout > .site-footer {
+    flex-shrink: 0;
+}
+
+.forum-layout > .site-footer {
+    margin-top: 0;
+}
+
+.forum-page {
+    max-width: 1160px;
+    padding-top: 36px;
+    padding-bottom: 36px;
+    overflow-wrap: anywhere;
+}
+
+.forum-page--form {
+    max-width: 860px;
+}
+
+.forum-stack,
+.forum-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-ml);
+}
+
+.forum-form .form-control {
+    min-width: 0;
+}
+
+.forum-form textarea {
+    min-height: 160px;
+    resize: vertical;
+}
+
+.forum-form > .btn {
+    align-self: flex-start;
+}
+
+.forum-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.forum-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--space-md);
+}
+
+.forum-filter .form-group {
+    flex: 1 1 240px;
+    min-width: 0;
+}
+
+.forum-tag {
+    align-self: flex-start;
+}
+
+.forum-empty {
+    align-items: flex-start;
+    background: var(--surface-soft);
+}
+
+.forum-text {
+    overflow-wrap: anywhere;
+    line-height: 1.8;
+}
+
+.forum-danger {
+    border-color: var(--danger);
+    background: var(--danger-bg);
+}
+
+.forum-btn-danger {
+    background: var(--danger);
+    border-color: var(--danger);
+}
+
+.forum-btn-danger:hover {
+    background: var(--danger-hover);
+    border-color: var(--danger-hover);
+}
+
+.forum-confirm {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+}
+
+.forum-confirm input {
+    flex: none;
+    margin-top: 5px;
+}
+
+/* Les entrées supplémentaires du header utilisent son repli existant. */
+.header-container,
+.header-nav {
+    flex-wrap: wrap;
+}
+
+.header-nav {
+    column-gap: 18px;
+    row-gap: 12px;
+}
+
+@media (max-width: 600px) {
+    .forum-page {
+        padding: 24px 16px;
+    }
+
+    .forum-page .cluster,
+    .forum-toolbar {
+        gap: var(--space-ms);
+    }
+
+    .forum-page .btn {
+        white-space: normal;
+        text-align: center;
+    }
+
+    .forum-filter > .btn {
+        flex: 1 1 auto;
+    }
+}

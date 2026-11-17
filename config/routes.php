@@ -11,7 +11,7 @@ return [
     'offres'       => '/GHD/public/offres.php',
     'candidatures' => '/GHD/public/mes_candidatures.php',
     'mes_offres'   => null, // pas de page « Mes offres » pour l'instant
-    'evenements'   => null, // public/evenements.php est encore vide
-    'forum'        => null, // public/forum.php est encore vide
+    'evenements'   => '/GHD/public/evenements.php',
+    'forum'        => '/GHD/public/forum.php',
     'admin'        => '/GHD/public/admin/GestionUtilisateurs.php',
 ];

@@ -17,7 +17,7 @@
 
             <div class="footer-links">
                 <h3>Navigation</h3>
-                <a href="/GHD/public/accueil.php">Accueil</a>
+                <a href="/GHD/public/index.php">Accueil</a>
                 <a href="/GHD/public/annuaire.php">Annuaire</a>
                 <a href="/GHD/public/profil.php">Mon profil</a>
             </div>

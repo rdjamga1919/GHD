@@ -1,6 +1,10 @@
 <?php
 $pageTitle = $pageTitle ?? 'GHD-HSP';
-$activePage = $activePage ?? '';
+$activePage = $activePage ?? match (basename($_SERVER['SCRIPT_NAME'] ?? '')) {
+    'evenements.php', 'evenement.php', 'evenement_detail.php', 'evenement_creer.php',
+    'evenement_modifier.php', 'evenement_supprimer.php' => 'evenements',
+    default => '',
+};
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -14,6 +18,8 @@ $role = $_SESSION['role'] ?? null;
 $liens = [
         ['accueil', 'Accueil', 'tous'],
         ['annuaire', 'Annuaire', 'connecte'],
+        ['evenements', 'Événements', 'connecte'],
+        ['forum', 'Forum', 'connecte'],
         ['offres', 'Offres', 'connecte'],
         ['candidatures', 'Mes candidatures', ['etudiant']],
         ['profil', 'Mon profil', 'connecte'],
@@ -41,8 +47,9 @@ $estVisible = function ($visibilite) use ($connecte, $role) {
     <link rel="stylesheet" href="/GHD/public/assets/css/style.css">
     <link rel="stylesheet" href="/GHD/public/assets/css/components.css">
     <link rel="stylesheet" href="/GHD/public/assets/css/layout.css">
+    <script src="/GHD/public/assets/js/main.js" defer></script>
 </head>
-<body>
+<body class="<?= htmlspecialchars($bodyClass ?? '', ENT_QUOTES, 'UTF-8') ?>">
 
 <header class="site-header">
     <div class="header-container">
@@ -56,7 +63,8 @@ $estVisible = function ($visibilite) use ($connecte, $role) {
             <?php foreach ($liens as [$cle, $libelle, $visibilite]): ?>
                 <?php if (!empty($routes[$cle]) && $estVisible($visibilite)): ?>
                     <a href="<?= htmlspecialchars($routes[$cle]) ?>"
-                       class="header-link <?= $activePage === $cle ? 'is-active' : '' ?>">
+                       class="header-link <?= $activePage === $cle ? 'is-active' : '' ?>"
+                       <?= $activePage === $cle ? 'aria-current="page"' : '' ?>>
                         <?= htmlspecialchars($libelle) ?>
                     </a>
                 <?php endif; ?>
