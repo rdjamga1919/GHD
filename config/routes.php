@@ -13,5 +13,8 @@ return [
     'mes_offres'   => null, // pas de page « Mes offres » pour l'instant
     'evenements'   => '/GHD/public/evenements.php',
     'forum'        => '/GHD/public/forum.php',
-    'admin'        => '/GHD/public/admin/GestionUtilisateurs.php',
+    'admin'        => '/GHD/public/admin/dashboard.php',
+    'admin_utilisateurs' => '/GHD/public/admin/GestionUtilisateurs.php',
+    'admin_specialites'  => null, // page encore vide : lien caché jusqu'à l'intégration
+    'admin_hopitaux'     => null, // page encore vide : lien caché jusqu'à l'intégration
 ];
