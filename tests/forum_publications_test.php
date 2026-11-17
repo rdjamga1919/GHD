@@ -279,10 +279,10 @@ foreach (['forum.php', 'section.php', 'creer_section.php', 'modifier_section.php
         verifierPublication(preg_match_all('/<' . $balise . '(?:\s|>)/i', $r['body']) === 1, 'Balise unique ' . $balise . ' : ' . $page);
         verifierPublication(substr_count($r['body'], '</' . $balise . '>') === 1, 'Fermeture unique ' . $balise . ' : ' . $page);
     }
-    verifierPublication(str_contains($r['body'], 'class="forum-layout"'), 'Layout limité au forum');
+    verifierPublication((bool) preg_match('/<body[^>]*class="[^"]*\bforum-layout\b/', $r['body']), 'Classe forum conservée dans le layout global');
     verifierPublication((bool) preg_match('~href="/GHD/public/forum.php"\s+class="header-link is-active"\s+aria-current="page"~', $r['body']), 'Forum actif dans le header');
     foreach (['variables.css', 'style.css', 'components.css', 'layout.css', 'main.js'] as $asset) {
-        verifierPublication(substr_count($r['body'], '/' . $asset . '"') === 1, 'Ressource chargée une seule fois : ' . $asset);
+        verifierPublication(preg_match_all('~/' . preg_quote($asset, '~') . '(?:\?[^"]*)?"~', $r['body']) === 1, 'Ressource chargée une seule fois : ' . $asset);
     }
     verifierPublication(!str_contains($r['body'], 'provisoire'), 'Aucun composant provisoire');
 }

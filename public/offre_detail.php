@@ -1,4 +1,5 @@
 <?php
+ob_start();
 session_start();
 
 require_once __DIR__ . '/../src/inclues/authentification.php';
@@ -35,4 +36,6 @@ $estProprietaire = $offre !== null
     && (int) $offre['ref_utilisateur'] === (int) $_SESSION['utilisateur_id'];
 
 // Inclusion de la vue associée pour l'affichage
-require_once __DIR__ . '/../views/offres/detail.php';
+require __DIR__ . '/../views/layouts/header.php';
+        require_once __DIR__ . '/../views/offres/detail.php';
+        require __DIR__ . '/../views/layouts/footer.php';

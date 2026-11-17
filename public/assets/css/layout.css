@@ -7,9 +7,9 @@
 }
 
 .header-container {
-    max-width: 1200px;
-    margin: auto;
-    padding: 16px 24px;
+    width: min(calc(100% - 2 * var(--page-gutter)), var(--content-max));
+    margin-inline: auto;
+    padding: 16px 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -64,9 +64,9 @@
 }
 
 .footer-container {
-    max-width: 1200px;
-    margin: auto;
-    padding: 48px 24px 20px;
+    width: min(calc(100% - 2 * var(--page-gutter)), var(--content-max));
+    margin-inline: auto;
+    padding: 40px 0 20px;
 }
 
 .footer-content {
@@ -358,4 +358,300 @@ body.forum-layout {
     .forum-filter > .btn {
         flex: 1 1 auto;
     }
+}
+
+/* Layout global : le document et le main appartiennent aux composants partagés. */
+body.site-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 0;
+}
+
+.site-layout > #main-content {
+    flex: 1 0 auto;
+    width: 100%;
+    min-width: 0;
+}
+
+.site-layout > .site-header,
+.site-layout > .site-footer {
+    flex-shrink: 0;
+}
+
+.site-layout > .site-footer {
+    margin-top: 0;
+}
+
+.layout-content {
+    --layout-max: var(--content-max);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-lg);
+    width: min(calc(100% - 2 * var(--page-gutter)), var(--layout-max));
+    max-width: var(--layout-max);
+    margin-inline: auto;
+    padding-block: 32px 40px;
+    padding-inline: 0;
+    overflow-wrap: anywhere;
+}
+
+.layout-content--form {
+    --layout-max: var(--content-form);
+}
+
+.layout-content--detail {
+    --layout-max: var(--content-detail);
+}
+
+.layout-content--text {
+    --layout-max: var(--content-text);
+}
+
+/* Une seule couche porte les marges et la largeur de la page. */
+.site-layout .layout-content > :is(.container, .content, .formulaire, .login-container) {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.site-layout .layout-content > .formulaire,
+.site-layout .layout-content > .formulaire:hover {
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+}
+
+.layout-content form:not(.table-actions form):not(.actions form) {
+    max-width: 100%;
+}
+
+.layout-content--form form,
+.layout-content--form .formulaire {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.layout-content--form form > .btn {
+    align-self: flex-start;
+}
+
+.layout-content .champ {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.layout-content textarea.form-control {
+    min-height: 130px;
+    resize: vertical;
+}
+
+.site-layout [hidden] {
+    display: none !important;
+}
+
+.site-layout .breadcrumb {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.site-layout .breadcrumb > ol {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.site-layout .breadcrumb > ol > li {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.site-layout .breadcrumb > ol > li + li::before {
+    content: "›";
+    color: var(--text-muted);
+}
+
+.breadcrumb [aria-current="page"] {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.layout-content .table-wrap {
+    min-width: 0;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.layout-content table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.layout-content th,
+.layout-content td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+.layout-content th {
+    background: var(--surface-soft);
+}
+
+.layout-content td.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+}
+
+.layout-content .carte { /* Vues événements existantes. */
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+}
+
+.layout-content .grille-evenements {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-lg);
+}
+
+.layout-content .carte > * + * {
+    margin-top: var(--space-md);
+}
+
+@media (max-width: 700px) {
+    .layout-content {
+        padding-block: 24px 32px;
+        gap: var(--space-ml);
+    }
+
+    .layout-content .grille-evenements {
+        grid-template-columns: 1fr;
+    }
+
+    .layout-content .btn {
+        white-space: normal;
+    }
+}
+
+.layout-content > * {
+    min-width: 0;
+}
+
+.layout-content table {
+    min-width: 560px;
+}
+
+/* Header pleine largeur, contenu interne borné ; aucun parent à overflow caché. */
+.site-layout > .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--surface);
+    box-shadow: 0 2px 10px rgba(16, 47, 64, 0.04);
+}
+
+.site-layout :where([id]) {
+    scroll-margin-top: calc(var(--site-header-height) + var(--space-md));
+}
+
+.site-layout .header-container {
+    row-gap: var(--space-ms);
+}
+
+.site-layout .header-nav {
+    max-width: 100%;
+    min-width: 0;
+}
+
+.site-layout .breadcrumb > ol > li::marker {
+    content: "";
+}
+
+.layout-content :where(.page-evenement, .hero, .section, .prose, .card-body) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.layout-content :where(.card, .carte) {
+    padding: clamp(20px, 2vw, 28px);
+}
+
+.layout-content--detail .detail-card {
+    gap: var(--space-lg);
+}
+
+.layout-content--detail .detail-card > div:not([class]) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-ms);
+}
+
+.layout-content--form form > label {
+    margin-bottom: calc(-1 * var(--space-sm));
+}
+
+.layout-content--form form > p:not(.cluster):not(.alert) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.layout-content--form form > p > br {
+    display: none;
+}
+
+.site-layout .layout-content--form .champ {
+    margin-bottom: 0;
+}
+
+.layout-content--form .form-control {
+    text-align: start;
+    min-width: 0;
+}
+
+.layout-content--form .cluster {
+    align-items: center;
+}
+
+@media (max-width: 700px) {
+    :root {
+        /* Repli sans JavaScript ; la hauteur réelle est mesurée si disponible. */
+        --site-header-height: 180px;
+    }
+
+    .site-layout .header-container {
+        padding-block: 12px;
+    }
+
+    .site-layout .header-nav {
+        gap: var(--space-ms);
+    }
+
+    .site-layout .breadcrumb > ol {
+        font-size: 12px;
+        row-gap: var(--space-xs);
+    }
+}
+
+.site-layout .sidebar {
+    top: calc(var(--site-header-height) + var(--space-md));
 }

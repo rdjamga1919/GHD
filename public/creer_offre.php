@@ -1,4 +1,5 @@
 <?php
+ob_start();
 session_start();
 
 require_once __DIR__ . '/../src/inclues/authentification.php';
@@ -22,4 +23,6 @@ $action = 'creer';
 $titrePage = 'Créer une offre - GHD-HSP';
 
 // Inclusion de la vue du formulaire associée
-require_once __DIR__ . '/../views/offres/formulaire.php';
+require __DIR__ . '/../views/layouts/header.php';
+        require_once __DIR__ . '/../views/offres/formulaire.php';
+        require __DIR__ . '/../views/layouts/footer.php';

@@ -1,4 +1,5 @@
 <?php
+ob_start();
 
 session_start();
 
@@ -38,4 +39,6 @@ if ($evenement !== null) {
     }
 }
 
-require_once __DIR__ . '/../views/evenements/detail.php';
+require __DIR__ . '/../views/layouts/header.php';
+        require_once __DIR__ . '/../views/evenements/detail.php';
+        require __DIR__ . '/../views/layouts/footer.php';

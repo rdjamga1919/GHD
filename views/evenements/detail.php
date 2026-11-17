@@ -1,16 +1,6 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $evenement !== null ? htmlspecialchars($evenement->getTitre()) : 'Événement introuvable' ?></title>
-    <link rel="stylesheet" href="assets/css/variables.css">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/components.css">
-</head>
-<body>
 
-<main class="container">
+
+<section class="container">
 
     <?php if ($flash): ?>
         <div class="alert <?= $flash[0] === 'succes' ? 'alert-success' : 'alert-error' ?>"><?= htmlspecialchars($flash[1]) ?></div>
@@ -42,7 +32,4 @@
 
     <p><a class="btn btn-secondary" href="evenements.php">Retour aux événements</a></p>
 
-</main>
-
-</body>
-</html>
+</section>
