@@ -17,6 +17,10 @@ $libellesRoles = [
 <section class="page-evenement">
     <p><a class="lien-retour" href="evenements.php">← Retour aux événements</a></p>
 
+    <?php if (!empty($flash)): ?>
+        <div class="alert <?= $flash[0] === 'succes' ? 'alert-success' : 'alert-error' ?>" role="alert"><?= echapper($flash[1]) ?></div>
+    <?php endif; ?>
+
     <?php if ($erreur !== null): ?>
         <p class="alert alert-error"><?= echapper($erreur) ?></p>
 
@@ -44,6 +48,11 @@ $libellesRoles = [
                     <li><strong>À prévoir :</strong> <?= echapper($evenement['element_requis']) ?></li>
                 <?php endif; ?>
             </ul>
+
+            <?php if (!empty($peutGerer)): ?>
+                <?php $idEvenementActions = (int) $evenement['id_evenement']; ?>
+                <?php require __DIR__ . '/_actions_organisateur.php'; ?>
+            <?php endif; ?>
 
             <h2>Description</h2>
             <p><?= nl2br(echapper($evenement['description'])) ?></p>

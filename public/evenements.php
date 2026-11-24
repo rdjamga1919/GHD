@@ -1,6 +1,16 @@
 <?php
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once __DIR__ . '/../src/inclues/evenement_droits.php';
 require_once __DIR__ . '/../src/repository/EvenementRepository.php';
+
+// Message flash éventuel (ex. « Événement supprimé avec succès. »)
+$flash = $_SESSION['flash'] ?? null;
+unset($_SESSION['flash']);
+$peutCreer = peutCreerEvenement();
 
 $evenements = [];
 $erreur = null;

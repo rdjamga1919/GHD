@@ -4,6 +4,7 @@ ob_start();
 session_start();
 
 require_once __DIR__ . '/../src/inclues/authentification.php';
+require_once __DIR__ . '/../src/inclues/evenement_droits.php';
 require_once __DIR__ . '/../src/repository/EvenementRepository.php';
 require_once __DIR__ . '/../src/repository/InscriptionEvenementRepository.php';
 
@@ -29,10 +30,13 @@ $connecte = isLoggedIn();
 $roleAutorise = in_array($_SESSION['role'] ?? '', InscriptionEvenementRepository::ROLES_AUTORISES, true);
 $etat = null;
 $estInscrit = false;
+$peutGerer = false;
 
 if ($evenement !== null) {
     $inscriptionRepository = new InscriptionEvenementRepository();
     $etat = $inscriptionRepository->getEtat($id);
+    // Boutons « Modifier » / « Supprimer » : organisateur médecin ou partenaire uniquement
+    $peutGerer = peutGererEvenement((new EvenementRepository())->getOrganisateurs($id));
 
     if ($connecte) {
         $estInscrit = $inscriptionRepository->estInscrit($id, (int) $_SESSION['utilisateur_id']);
@@ -40,5 +44,5 @@ if ($evenement !== null) {
 }
 
 require __DIR__ . '/../views/layouts/header.php';
-        require_once __DIR__ . '/../views/evenements/detail.php';
-        require __DIR__ . '/../views/layouts/footer.php';
+require_once __DIR__ . '/../views/evenements/detail.php';
+require __DIR__ . '/../views/layouts/footer.php';

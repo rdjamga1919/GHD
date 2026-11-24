@@ -11,6 +11,14 @@ if (!function_exists('echapper')) {
 <section class="page-evenements">
     <h1>Événements</h1>
 
+    <?php if (!empty($flash)): ?>
+        <div class="alert <?= $flash[0] === 'succes' ? 'alert-success' : 'alert-error' ?>" role="alert"><?= echapper($flash[1]) ?></div>
+    <?php endif; ?>
+
+    <?php if (!empty($peutCreer)): ?>
+        <p><a class="btn" href="evenement_creer.php">Créer un événement</a></p>
+    <?php endif; ?>
+
     <?php if ($erreur !== null): ?>
         <p class="alert alert-error"><?= echapper($erreur) ?></p>
     <?php elseif (empty($evenements)): ?>

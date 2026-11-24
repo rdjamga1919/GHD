@@ -70,6 +70,7 @@
     <?php endif; ?>
 </div>
 
-<div class="space-before-lg">
+<div class="space-before-lg" style="display: flex; gap: 12px; flex-wrap: wrap;">
     <a href="modifier_profil.php" class="btn">Modifier mon profil</a>
+    <a href="evenement_creer.php" class="btn btn-secondary">Créer un événement</a>
 </div>
