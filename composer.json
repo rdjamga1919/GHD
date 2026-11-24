@@ -1,0 +1,9 @@
+{
+    "name": "ghd/ghd-hsp",
+    "description": "Plateforme GHD-HSP (BTS SIO SLAM)",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "phpmailer/phpmailer": "^7.2"
+    }
+}
