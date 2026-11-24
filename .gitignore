@@ -10,3 +10,9 @@ uploads/*
 
 # Fichier de connexion à la BDD (identifiants locaux propres à chacun)
 /src/bdd/Bdd.php
+
+# Dependances Composer (a reinstaller avec "composer install")
+/vendor/
+
+# Identifiants SMTP locaux (ne jamais versionner)
+/src/config/Mail.php
